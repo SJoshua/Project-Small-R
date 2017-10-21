@@ -164,16 +164,7 @@ function makeRequest(method, parameters)
 		source = ltn12.source.string(body),
 		sink = ltn12.sink.table(response),
 	}
-
-	print(table.encode({
-		success = success,
-		code = code,
-		headers = headers,
-		status = status,
-		body = body,
-		response = response
-	}))
-
+	
 	if success then
 		local status, msg = pcall(cjson.decode, table.concat(response))
 		if status then
