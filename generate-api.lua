@@ -1,18 +1,14 @@
 -------------------------------------------
 -- function @ getMe
--- A simple method for testing your bot9s auth token. Requires no parameters. Returns basic information about the bot in form of a User object.
+-- A simple method for testing your bot's auth token. Requires no parameters. Returns basic information about the bot in form of a User object.
 -------------------------------------------
 -- Parameters
 -- none.
 -------------------------------------------
 function bot.getMe()
 	local body = {}
-	local ret = makeRequest("getMe", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("getMe", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -22,7 +18,7 @@ end
 -- Parameters
 -- chat_id (Integer or String) [Yes]: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 -- text (String) [Yes]: Text of the message to be sent
--- parse_mode (String) [Optional]: Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot9s message.
+-- parse_mode (String) [Optional]: Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot's message.
 -- disable_web_page_preview (Boolean) [Optional]: Disables link previews for links in this message
 -- disable_notification (Boolean) [Optional]: Sends the message silently. Users will receive a notification with no sound.
 -- reply_to_message_id (Integer) [Optional]: If the message is a reply, ID of the original message
@@ -43,12 +39,8 @@ function bot.sendMessage(chat_id, text, parse_mode, disable_web_page_preview, di
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendMessage", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendMessage", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -76,12 +68,8 @@ function bot.forwardMessage(chat_id, from_chat_id, disable_notification, message
 	body.from_chat_id = from_chat_id
 	body.disable_notification = disable_notification
 	body.message_id = message_id
-	local ret = makeRequest("forwardMessage", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("forwardMessage", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -110,12 +98,8 @@ function bot.sendPhoto(chat_id, photo, caption, disable_notification, reply_to_m
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendPhoto", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendPhoto", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -151,12 +135,8 @@ function bot.sendAudio(chat_id, audio, caption, duration, performer, title, disa
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendAudio", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendAudio", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -185,12 +165,8 @@ function bot.sendDocument(chat_id, document, caption, disable_notification, repl
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendDocument", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendDocument", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -225,12 +201,8 @@ function bot.sendVideo(chat_id, video, duration, width, height, caption, disable
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendVideo", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendVideo", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -261,12 +233,8 @@ function bot.sendVoice(chat_id, voice, caption, duration, disable_notification, 
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendVoice", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendVoice", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -297,12 +265,8 @@ function bot.sendVideoNote(chat_id, video_note, duration, length, disable_notifi
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendVideoNote", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendVideoNote", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -336,12 +300,8 @@ function bot.sendLocation(chat_id, latitude, longitude, live_period, disable_not
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendLocation", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendLocation", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -370,12 +330,8 @@ function bot.editMessageLiveLocation(chat_id, message_id, inline_message_id, lat
 	body.latitude = latitude
 	body.longitude = longitude
 	body.reply_markup = reply_markup
-	local ret = makeRequest("editMessageLiveLocation", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("editMessageLiveLocation", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -394,12 +350,8 @@ function bot.stopMessageLiveLocation(chat_id, message_id, inline_message_id, rep
 	body.message_id = message_id
 	body.inline_message_id = inline_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("stopMessageLiveLocation", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("stopMessageLiveLocation", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -443,12 +395,8 @@ function bot.sendVenue(chat_id, latitude, longitude, title, address, foursquare_
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendVenue", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendVenue", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -457,9 +405,9 @@ end
 -------------------------------------------
 -- Parameters
 -- chat_id (Integer or String) [Yes]: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
--- phone_number (String) [Yes]: Contact9s phone number
--- first_name (String) [Yes]: Contact9s first name
--- last_name (String) [Optional]: Contact9s last name
+-- phone_number (String) [Yes]: Contact's phone number
+-- first_name (String) [Yes]: Contact's first name
+-- last_name (String) [Optional]: Contact's last name
 -- disable_notification (Boolean) [Optional]: Sends the message silently. Users will receive a notification with no sound.
 -- reply_to_message_id (Integer) [Optional]: If the message is a reply, ID of the original message
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove keyboard or to force a reply from the user.
@@ -482,17 +430,13 @@ function bot.sendContact(chat_id, phone_number, first_name, last_name, disable_n
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendContact", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendContact", body)
+	return ret or msg
 end
 
 -------------------------------------------
 -- function @ sendChatAction
--- Use this method when you need to tell the user that something is happening on the bot9s side. The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status). Returns True on success.
+-- Use this method when you need to tell the user that something is happening on the bot's side. The status is set for 5 seconds or less (when a message arrives from your bot, Telegram clients clear its typing status). Returns True on success.
 -- Example: The ImageBot needs some time to process a request and upload the image. Instead of sending a text message along the lines of “Retrieving image, please wait…”, the bot may use sendChatAction with action = upload_photo. The user will see a “sending photo” status for the bot.
 -- We only recommend using this method when a response from the bot will take a noticeable amount of time to arrive.
 -------------------------------------------
@@ -510,12 +454,8 @@ function bot.sendChatAction(chat_id, action)
 	local body = {}
 	body.chat_id = chat_id
 	body.action = action
-	local ret = makeRequest("sendChatAction", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendChatAction", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -535,17 +475,13 @@ function bot.getUserProfilePhotos(user_id, offset, limit)
 	body.user_id = user_id
 	body.offset = offset
 	body.limit = limit
-	local ret = makeRequest("getUserProfilePhotos", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("getUserProfilePhotos", body)
+	return ret or msg
 end
 
 -------------------------------------------
 -- function @ getFile
--- Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size. On success, a File object is returned. The file can then be downloaded via the link https://api.telegram.org/file/bot&lt;token&gt;/&lt;file_path&gt;, where &lt;file_path&gt; is taken from the response. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile again.
+-- Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to 20MB in size. On success, a File object is returned. The file can then be downloaded via the link https://api.telegram.org/file/bot/, where  is taken from the response. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile again.
 -------------------------------------------
 -- Parameters
 -- file_id (String) [Yes]: File identifier to get info about
@@ -556,18 +492,14 @@ function bot.getFile(file_id)
 	end
 	local body = {}
 	body.file_id = file_id
-	local ret = makeRequest("getFile", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("getFile", body)
+	return ret or msg
 end
 
 -------------------------------------------
 -- function @ kickChatMember
 -- Use this method to kick a user from a group, a supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success.
--- Note: In regular groups (non-supergroups), this method will only work if the ‘All Members Are Admins’ setting is off in the target group. Otherwise members may only be removed by the group9s creator or by the member that added them.
+-- Note: In regular groups (non-supergroups), this method will only work if the ‘All Members Are Admins’ setting is off in the target group. Otherwise members may only be removed by the group's creator or by the member that added them.
 -- 
 -------------------------------------------
 -- Parameters
@@ -586,12 +518,8 @@ function bot.kickChatMember(chat_id, user_id, until_date)
 	body.chat_id = chat_id
 	body.user_id = user_id
 	body.until_date = until_date
-	local ret = makeRequest("kickChatMember", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("kickChatMember", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -612,12 +540,8 @@ function bot.unbanChatMember(chat_id, user_id)
 	local body = {}
 	body.chat_id = chat_id
 	body.user_id = user_id
-	local ret = makeRequest("unbanChatMember", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("unbanChatMember", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -648,12 +572,8 @@ function bot.restrictChatMember(chat_id, user_id, until_date, can_send_messages,
 	body.can_send_media_messages = can_send_media_messages
 	body.can_send_other_messages = can_send_other_messages
 	body.can_add_web_page_previews = can_add_web_page_previews
-	local ret = makeRequest("restrictChatMember", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("restrictChatMember", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -690,12 +610,8 @@ function bot.promoteChatMember(chat_id, user_id, can_change_info, can_post_messa
 	body.can_restrict_members = can_restrict_members
 	body.can_pin_messages = can_pin_messages
 	body.can_promote_members = can_promote_members
-	local ret = makeRequest("promoteChatMember", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("promoteChatMember", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -711,17 +627,13 @@ function bot.exportChatInviteLink(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret = makeRequest("exportChatInviteLink", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("exportChatInviteLink", body)
+	return ret or msg
 end
 
 -------------------------------------------
 -- function @ setChatPhoto
--- Use this method to set a new profile photo for the chat. Photos can9t be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success. 
+-- Use this method to set a new profile photo for the chat. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success. 
 -- Note: In regular groups (non-supergroups), this method will only work if the ‘All Members Are Admins’ setting is off in the target group.
 -- 
 -------------------------------------------
@@ -739,17 +651,13 @@ function bot.setChatPhoto(chat_id, photo)
 	local body = {}
 	body.chat_id = chat_id
 	body.photo = photo
-	local ret = makeRequest("setChatPhoto", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("setChatPhoto", body)
+	return ret or msg
 end
 
 -------------------------------------------
 -- function @ deleteChatPhoto
--- Use this method to delete a chat photo. Photos can9t be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success. 
+-- Use this method to delete a chat photo. Photos can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success. 
 -- Note: In regular groups (non-supergroups), this method will only work if the ‘All Members Are Admins’ setting is off in the target group.
 -- 
 -------------------------------------------
@@ -762,17 +670,13 @@ function bot.deleteChatPhoto(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret = makeRequest("deleteChatPhoto", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("deleteChatPhoto", body)
+	return ret or msg
 end
 
 -------------------------------------------
 -- function @ setChatTitle
--- Use this method to change the title of a chat. Titles can9t be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success. 
+-- Use this method to change the title of a chat. Titles can't be changed for private chats. The bot must be an administrator in the chat for this to work and must have the appropriate admin rights. Returns True on success. 
 -- Note: In regular groups (non-supergroups), this method will only work if the ‘All Members Are Admins’ setting is off in the target group.
 -- 
 -------------------------------------------
@@ -790,12 +694,8 @@ function bot.setChatTitle(chat_id, title)
 	local body = {}
 	body.chat_id = chat_id
 	body.title = title
-	local ret = makeRequest("setChatTitle", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("setChatTitle", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -813,12 +713,8 @@ function bot.setChatDescription(chat_id, description)
 	local body = {}
 	body.chat_id = chat_id
 	body.description = description
-	local ret = makeRequest("setChatDescription", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("setChatDescription", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -841,12 +737,8 @@ function bot.pinChatMessage(chat_id, message_id, disable_notification)
 	body.chat_id = chat_id
 	body.message_id = message_id
 	body.disable_notification = disable_notification
-	local ret = makeRequest("pinChatMessage", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("pinChatMessage", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -862,12 +754,8 @@ function bot.unpinChatMessage(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret = makeRequest("unpinChatMessage", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("unpinChatMessage", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -883,12 +771,8 @@ function bot.leaveChat(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret = makeRequest("leaveChat", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("leaveChat", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -904,12 +788,8 @@ function bot.getChat(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret = makeRequest("getChat", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("getChat", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -925,12 +805,8 @@ function bot.getChatAdministrators(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret = makeRequest("getChatAdministrators", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("getChatAdministrators", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -946,12 +822,8 @@ function bot.getChatMembersCount(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret = makeRequest("getChatMembersCount", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("getChatMembersCount", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -972,12 +844,8 @@ function bot.getChatMember(chat_id, user_id)
 	local body = {}
 	body.chat_id = chat_id
 	body.user_id = user_id
-	local ret = makeRequest("getChatMember", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("getChatMember", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -998,12 +866,8 @@ function bot.setChatStickerSet(chat_id, sticker_set_name)
 	local body = {}
 	body.chat_id = chat_id
 	body.sticker_set_name = sticker_set_name
-	local ret = makeRequest("setChatStickerSet", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("setChatStickerSet", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1019,12 +883,8 @@ function bot.deleteChatStickerSet(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret = makeRequest("deleteChatStickerSet", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("deleteChatStickerSet", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1037,7 +897,7 @@ end
 -- callback_query_id (String) [Yes]: Unique identifier for the query to be answered
 -- text (String) [Optional]: Text of the notification. If not specified, nothing will be shown to the user, 0-200 characters
 -- show_alert (Boolean) [Optional]: If true, an alert will be shown by the client instead of a notification at the top of the chat screen. Defaults to false.
--- url (String) [Optional]: URL that will be opened by the user9s client. If you have created a Game and accepted the conditions via @Botfather, specify the URL that opens your game – note that this will only work if the query comes from a callback_game button.Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a parameter.
+-- url (String) [Optional]: URL that will be opened by the user's client. If you have created a Game and accepted the conditions via @Botfather, specify the URL that opens your game – note that this will only work if the query comes from a callback_game button.Otherwise, you may use links like t.me/your_bot?start=XXXX that open your bot with a parameter.
 -- cache_time (Integer) [Optional]: The maximum amount of time in seconds that the result of the callback query may be cached client-side. Telegram apps will support caching starting in version 3.14. Defaults to 0.
 -------------------------------------------
 function bot.answerCallbackQuery(callback_query_id, text, show_alert, url, cache_time)
@@ -1050,12 +910,8 @@ function bot.answerCallbackQuery(callback_query_id, text, show_alert, url, cache
 	body.show_alert = show_alert
 	body.url = url
 	body.cache_time = cache_time
-	local ret = makeRequest("answerCallbackQuery", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("answerCallbackQuery", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1067,7 +923,7 @@ end
 -- message_id (Integer) [Optional]: Required if inline_message_id is not specified. Identifier of the sent message
 -- inline_message_id (String) [Optional]: Required if chat_id and message_id are not specified. Identifier of the inline message
 -- text (String) [Yes]: New text of the message
--- parse_mode (String) [Optional]: Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot9s message.
+-- parse_mode (String) [Optional]: Send Markdown or HTML, if you want Telegram apps to show bold, italic, fixed-width text or inline URLs in your bot's message.
 -- disable_web_page_preview (Boolean) [Optional]: Disables link previews for links in this message
 -- reply_markup (InlineKeyboardMarkup) [Optional]: A JSON-serialized object for an inline keyboard.
 -------------------------------------------
@@ -1083,12 +939,8 @@ function bot.editMessageText(chat_id, message_id, inline_message_id, text, parse
 	body.parse_mode = parse_mode
 	body.disable_web_page_preview = disable_web_page_preview
 	body.reply_markup = reply_markup
-	local ret = makeRequest("editMessageText", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("editMessageText", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1109,12 +961,8 @@ function bot.editMessageCaption(chat_id, message_id, inline_message_id, caption,
 	body.inline_message_id = inline_message_id
 	body.caption = caption
 	body.reply_markup = reply_markup
-	local ret = makeRequest("editMessageCaption", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("editMessageCaption", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1133,12 +981,8 @@ function bot.editMessageReplyMarkup(chat_id, message_id, inline_message_id, repl
 	body.message_id = message_id
 	body.inline_message_id = inline_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("editMessageReplyMarkup", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("editMessageReplyMarkup", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1159,12 +1003,8 @@ function bot.deleteMessage(chat_id, message_id)
 	local body = {}
 	body.chat_id = chat_id
 	body.message_id = message_id
-	local ret = makeRequest("deleteMessage", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("deleteMessage", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1191,12 +1031,8 @@ function bot.sendSticker(chat_id, sticker, disable_notification, reply_to_messag
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendSticker", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendSticker", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1212,12 +1048,8 @@ function bot.getStickerSet(name)
 	end
 	local body = {}
 	body.name = name
-	local ret = makeRequest("getStickerSet", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("getStickerSet", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1238,12 +1070,8 @@ function bot.uploadStickerFile(user_id, png_sticker)
 	local body = {}
 	body.user_id = user_id
 	body.png_sticker = png_sticker
-	local ret = makeRequest("uploadStickerFile", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("uploadStickerFile", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1252,7 +1080,7 @@ end
 -------------------------------------------
 -- Parameters
 -- user_id (Integer) [Yes]: User identifier of created sticker set owner
--- name (String) [Yes]: Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only english letters, digits and underscores. Must begin with a letter, can9t contain consecutive underscores and must end in “_by_&lt;bot username&gt;”. &lt;bot_username&gt; is case insensitive. 1-64 characters.
+-- name (String) [Yes]: Short name of sticker set, to be used in t.me/addstickers/ URLs (e.g., animals). Can contain only english letters, digits and underscores. Must begin with a letter, can't contain consecutive underscores and must end in “_by_”.  is case insensitive. 1-64 characters.
 -- title (String) [Yes]: Sticker set title, 1-64 characters
 -- png_sticker (InputFile or String) [Yes]: Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. Pass a file_id as a String to send a file that already exists on the Telegram servers, pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one using multipart/form-data. More info on Sending Files »
 -- emojis (String) [Yes]: One or more emoji corresponding to the sticker
@@ -1283,12 +1111,8 @@ function bot.createNewStickerSet(user_id, name, title, png_sticker, emojis, cont
 	body.emojis = emojis
 	body.contains_masks = contains_masks
 	body.mask_position = mask_position
-	local ret = makeRequest("createNewStickerSet", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("createNewStickerSet", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1321,12 +1145,8 @@ function bot.addStickerToSet(user_id, name, png_sticker, emojis, mask_position)
 	body.png_sticker = png_sticker
 	body.emojis = emojis
 	body.mask_position = mask_position
-	local ret = makeRequest("addStickerToSet", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("addStickerToSet", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1347,12 +1167,8 @@ function bot.setStickerPositionInSet(sticker, position)
 	local body = {}
 	body.sticker = sticker
 	body.position = position
-	local ret = makeRequest("setStickerPositionInSet", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("setStickerPositionInSet", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1368,12 +1184,8 @@ function bot.deleteStickerFromSet(sticker)
 	end
 	local body = {}
 	body.sticker = sticker
-	local ret = makeRequest("deleteStickerFromSet", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("deleteStickerFromSet", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1387,7 +1199,7 @@ end
 -- is_personal (Boolean) [Optional]: Pass True, if results may be cached on the server side only for the user that sent the query. By default, results may be returned to any user who sends the same query
 -- next_offset (String) [Optional]: Pass the offset that a client should send in the next query with the same text to receive more results. Pass an empty string if there are no more results or if you don‘t support pagination. Offset length can’t exceed 64 bytes.
 -- switch_pm_text (String) [Optional]: If passed, clients will display a button with specified text that switches the user to a private chat with the bot and sends the bot a start message with the parameter switch_pm_parameter
--- switch_pm_parameter (String) [Optional]: Deep-linking parameter for the /start message sent to the bot when user presses the switch button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.Example: An inline bot that sends YouTube videos can ask the user to connect the bot to their YouTube account to adapt search results accordingly. To do this, it displays a ‘Connect your YouTube account’ button above the results, or even before showing any. The user presses the button, switches to a private chat with the bot and, in doing so, passes a start parameter that instructs the bot to return an oauth link. Once done, the bot can offer a switch_inline button so that the user can easily return to the chat where they wanted to use the bot9s inline capabilities.
+-- switch_pm_parameter (String) [Optional]: Deep-linking parameter for the /start message sent to the bot when user presses the switch button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.Example: An inline bot that sends YouTube videos can ask the user to connect the bot to their YouTube account to adapt search results accordingly. To do this, it displays a ‘Connect your YouTube account’ button above the results, or even before showing any. The user presses the button, switches to a private chat with the bot and, in doing so, passes a start parameter that instructs the bot to return an oauth link. Once done, the bot can offer a switch_inline button so that the user can easily return to the chat where they wanted to use the bot's inline capabilities.
 -------------------------------------------
 function bot.answerInlineQuery(inline_query_id, results, cache_time, is_personal, next_offset, switch_pm_text, switch_pm_parameter)
 	if not inline_query_id then
@@ -1404,12 +1216,8 @@ function bot.answerInlineQuery(inline_query_id, results, cache_time, is_personal
 	body.next_offset = next_offset
 	body.switch_pm_text = switch_pm_text
 	body.switch_pm_parameter = switch_pm_parameter
-	local ret = makeRequest("answerInlineQuery", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("answerInlineQuery", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1429,14 +1237,14 @@ end
 -- photo_size (Integer) [Optional]: Photo size
 -- photo_width (Integer) [Optional]: Photo width
 -- photo_height (Integer) [Optional]: Photo height
--- need_name (Boolean) [Optional]: Pass True, if you require the user9s full name to complete the order
--- need_phone_number (Boolean) [Optional]: Pass True, if you require the user9s phone number to complete the order
--- need_email (Boolean) [Optional]: Pass True, if you require the user9s email to complete the order
--- need_shipping_address (Boolean) [Optional]: Pass True, if you require the user9s shipping address to complete the order
+-- need_name (Boolean) [Optional]: Pass True, if you require the user's full name to complete the order
+-- need_phone_number (Boolean) [Optional]: Pass True, if you require the user's phone number to complete the order
+-- need_email (Boolean) [Optional]: Pass True, if you require the user's email to complete the order
+-- need_shipping_address (Boolean) [Optional]: Pass True, if you require the user's shipping address to complete the order
 -- is_flexible (Boolean) [Optional]: Pass True, if the final price depends on the shipping method
 -- disable_notification (Boolean) [Optional]: Sends the message silently. Users will receive a notification with no sound.
 -- reply_to_message_id (Integer) [Optional]: If the message is a reply, ID of the original message
--- reply_markup (InlineKeyboardMarkup) [Optional]: A JSON-serialized object for an inline keyboard. If empty, one 9Pay total price9 button will be shown. If not empty, the first button must be a Pay button.
+-- reply_markup (InlineKeyboardMarkup) [Optional]: A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown. If not empty, the first button must be a Pay button.
 -------------------------------------------
 function bot.sendInvoice(chat_id, title, description, payload, provider_token, start_parameter, currency, prices, photo_url, photo_size, photo_width, photo_height, need_name, need_phone_number, need_email, need_shipping_address, is_flexible, disable_notification, reply_to_message_id, reply_markup)
 	if not chat_id then
@@ -1484,12 +1292,8 @@ function bot.sendInvoice(chat_id, title, description, payload, provider_token, s
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendInvoice", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendInvoice", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1500,7 +1304,7 @@ end
 -- shipping_query_id (String) [Yes]: Unique identifier for the query to be answered
 -- ok (Boolean) [Yes]: Specify True if delivery to the specified address is possible and False if there are any problems (for example, if delivery to the specified address is not possible)
 -- shipping_options (Array of ShippingOption) [Optional]: Required if ok is True. A JSON-serialized array of available shipping options.
--- error_message (String) [Optional]: Required if ok is False. Error message in human readable form that explains why it is impossible to complete the order (e.g. &quot;Sorry, delivery to your desired address is unavailable9). Telegram will display this message to the user.
+-- error_message (String) [Optional]: Required if ok is False. Error message in human readable form that explains why it is impossible to complete the order (e.g. "Sorry, delivery to your desired address is unavailable'). Telegram will display this message to the user.
 -------------------------------------------
 function bot.answerShippingQuery(shipping_query_id, ok, shipping_options, error_message)
 	if not shipping_query_id then
@@ -1514,12 +1318,8 @@ function bot.answerShippingQuery(shipping_query_id, ok, shipping_options, error_
 	body.ok = ok
 	body.shipping_options = shipping_options
 	body.error_message = error_message
-	local ret = makeRequest("answerShippingQuery", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("answerShippingQuery", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1529,7 +1329,7 @@ end
 -- Parameters
 -- pre_checkout_query_id (String) [Yes]: Unique identifier for the query to be answered
 -- ok (Boolean) [Yes]: Specify True if everything is alright (goods are available, etc.) and the bot is ready to proceed with the order. Use False if there are any problems.
--- error_message (String) [Optional]: Required if ok is False. Error message in human readable form that explains the reason for failure to proceed with the checkout (e.g. &quot;Sorry, somebody just bought the last of our amazing black T-shirts while you were busy filling out your payment details. Please choose a different color or garment!&quot;). Telegram will display this message to the user.
+-- error_message (String) [Optional]: Required if ok is False. Error message in human readable form that explains the reason for failure to proceed with the checkout (e.g. "Sorry, somebody just bought the last of our amazing black T-shirts while you were busy filling out your payment details. Please choose a different color or garment!"). Telegram will display this message to the user.
 -------------------------------------------
 function bot.answerPreCheckoutQuery(pre_checkout_query_id, ok, error_message)
 	if not pre_checkout_query_id then
@@ -1542,12 +1342,8 @@ function bot.answerPreCheckoutQuery(pre_checkout_query_id, ok, error_message)
 	body.pre_checkout_query_id = pre_checkout_query_id
 	body.ok = ok
 	body.error_message = error_message
-	local ret = makeRequest("answerPreCheckoutQuery", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("answerPreCheckoutQuery", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1574,17 +1370,13 @@ function bot.sendGame(chat_id, game_short_name, disable_notification, reply_to_m
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret = makeRequest("sendGame", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("sendGame", body)
+	return ret or msg
 end
 
 -------------------------------------------
 -- function @ setGameScore
--- Use this method to set the score of the specified user in a game. On success, if the message was sent by the bot, returns the edited Message, otherwise returns True. Returns an error, if the new score is not greater than the user9s current score in the chat and force is False.
+-- Use this method to set the score of the specified user in a game. On success, if the message was sent by the bot, returns the edited Message, otherwise returns True. Returns an error, if the new score is not greater than the user's current score in the chat and force is False.
 -------------------------------------------
 -- Parameters
 -- user_id (Integer) [Yes]: User identifier
@@ -1610,12 +1402,8 @@ function bot.setGameScore(user_id, score, force, disable_edit_message, chat_id, 
 	body.chat_id = chat_id
 	body.message_id = message_id
 	body.inline_message_id = inline_message_id
-	local ret = makeRequest("setGameScore", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("setGameScore", body)
+	return ret or msg
 end
 
 -------------------------------------------
@@ -1639,11 +1427,7 @@ function bot.getGameHighScores(user_id, chat_id, message_id, inline_message_id)
 	body.chat_id = chat_id
 	body.message_id = message_id
 	body.inline_message_id = inline_message_id
-	local ret = makeRequest("getGameHighScores", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+	local ret, msg = makeRequest("getGameHighScores", body)
+	return ret or msg
 end
 

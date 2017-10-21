@@ -6,47 +6,27 @@
 cjson = require("cjson")
 socket = require("socket")
 http = require("socket.http")
-md5 = require("md5")
 
 -------------------------------------------
--- settings
+-- config
 -------------------------------------------
 dofile("config.lua")
-
-math.randomseed(os.time())
 
 -------------------------------------------
 -- info
 -------------------------------------------
 local dead_flag = false
-votes = votes or {}
-msgList = msgList or {}
-mahjong = mahjong or {}
-dictLog = dictLog or {}
-clickMsg = clickMsg or {}
-naiveList = naiveList or {}
-forwardCnt = forwardCnt or {}
-forwardLog = forwardLog or {}
-conversation = conversation or {}
 
 dofile("knowledge")
 
 -------------------------------------------
 -- utils
 -------------------------------------------
-dofile("utils")
+dofile("utils.lua")
 
 function save()
 	local f = io.open("database", "w")
-	f:write("msgList = ", table.encode(msgList),
-		"\n\nvotes = ", table.encode(votes),
-		"\n\nnaiveList = ", table.encode(naiveList),
-		"\n\nmahjong = ", table.encode(mahjong),
-		"\n\nconversation = ", table.encode(conversation),
-		"\n\ndictLog = ", table.encode(dictLog),
-		"\n\nclickMsg = ", table.encode(clickMsg),
-		"\n\nforwardCnt = ", table.encode(forwardCnt),
-		"\n\nforwardLog = ", table.encode(forwardLog))
+	-- todo
 	f:close()
 end
 
@@ -57,89 +37,6 @@ end
 function backup()
 	os.execute("rm database.bak")
 	os.execute("cp database database.bak")
-end
-
-function sandbox(t)
-	local ret = {}
-	for _, name in pairs(t) do
-		if _G[name] then
-			if type(_G[name]) == "table" then
-				ret[name] = {}
-				for k, v in pairs(_G[name]) do
-					if type(v) == "function" then
-						ret[name][k] = function (...)
-							return v(...)
-						end
-					else
-						ret[name][k] = v
-					end
-				end
-			elseif type(_G[name]) == "function" then
-				ret[name] = function (...)
-					return _G[name](...)
-				end
-			else
-				ret[name] = _G[name]
-			end
-		end
-	end
-	return ret
-end
-
-function wget(url)
-	os.execute('wget -O wget.tmp "' .. url .. '"')
-	local f = io.open("wget.tmp", "r")
-	local ret = f:read("*a")
-	f:close()
-	return ret
-end
-
-base64 = {
-	b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
-	enc = function(data)
-		local b = base64.b
-		return ((data:gsub('.', function(x)
-			local r,b='',x:byte()
-			for i=8,1,-1 do r=r..(b%2^i-b%2^(i-1)>0 and '1' or '0') end
-			return r;
-		end)..'0000'):gsub('%d%d%d?%d?%d?%d?', function(x)
-			if (#x < 6) then return '' end
-			local c=0
-			for i=1,6 do c=c+(x:sub(i,i)=='1' and 2^(6-i) or 0) end
-			return b:sub(c+1,c+1)
-		end)..({ '', '==', '=' })[#data%3+1])
-	end,
-	dec = function(data)
-		local b = base64.b
-		data = string.gsub(data, '[^'..b..'=]', '')
-		return (data:gsub('.', function(x)
-			if (x == '=') then return '' end
-			local r,f='',(b:find(x)-1)
-			for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and '1' or '0') end
-			return r;
-		end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
-			if (#x ~= 8) then return '' end
-			local c=0
-			for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end
-			return string.char(c)
-		end))
-	end
-}
-
-function shuffle(t)
-	local nums = {}
-	local ret = {}
-	for k = 1, #t do
-		nums[k] = k
-	end
-	for k = 1, #t do
-		local rnd = math.random(#nums)
-		table.insert(ret, t[nums[rnd]])
-		table.remove(nums, rnd)
-	end
-	for k = 1, #t do
-		t[k] = ret[k]
-	end
 end
 
 -------------------------------------------
@@ -198,10 +95,19 @@ commands = {
 	reload = {
 		func = function()
 			local ret = bot.sendMessage(msg.chat.id, "reloading...", nil, nil, nil, msg.message_id)
-			local sta, err = pcall(dofile, "soul.lua")
-			if not sta then
-				s = s .. "error @ Soul:\n```\n" .. err .. "\n```\n"
+			local s = ""
+
+			local function reload(file, name)
+				local sta, err = pcall(dofile, file)
+				if not sta then
+					s = s .. "error @ " .. name .. ":\n```\n" .. err .. "\n```\n"
+				end
 			end
+
+			reload("utils.lua", "Utils")
+			reload("api.lua", "API")
+			reload("soul.lua", "Soul")
+			
 			bot.editMessageText(msg.chat.id, ret.result.message_id, nil, "reloading...\n" .. ((s == "") and "done." or s), "Markdown")
 		end,
 		desc = "Reload my soul."
@@ -267,7 +173,7 @@ commands = {
 	exec = {
 		func = function()
 			message = msg
-			if msg.from.username == settings.master then
+			if msg.from.username == config.master then
 				if msg.text:find("os.exit") then
 					bot.sendMessage(msg.chat.id, "[WARNING]\nPlease use /shutdown instead.")
 					return
@@ -278,7 +184,7 @@ commands = {
 					ts = ts .. string.format("[return %d] %s\n", i-1, tostring(t[i]))
 				end
 				bot.sendMessage(msg.chat.id, ts .. "[END]")
-			elseif settings.dolua then
+			elseif config.dolua then
 				if msg.text:find("for") or msg.text:find("while") or msg.text:find("until") then
 					bot.sendMessage(msg.chat.id, "Sorry, but no looping.")
 				else
@@ -301,7 +207,7 @@ commands = {
 	},
 	mute = {
 		func = function()
-			settings.mute = true
+			config.mute = true
 			bot.sendMessage(msg.chat.id, "Okay.", nil, nil, nil, msg.message_id)
 		end,
 		desc = "Stop talking.",
@@ -311,7 +217,7 @@ commands = {
 	},
  	unmute = {
 		func = function()
-			settings.mute = true
+			config.mute = true
 			bot.sendMessage(msg.chat.id, "Okay.", nil, nil, nil, msg.message_id)
 		end,
 		desc = "Let's go!",
@@ -344,7 +250,7 @@ commands = {
 	review = {
 		func = function()
 			if not msg.reply_to_message.text:find("/revive") then
-				return extension.onTextReceive(msg.reply_to_message)
+				return soul.onTextReceive(msg.reply_to_message)
 			end
 		end,
 		desc = "Process a message again.",
@@ -357,9 +263,24 @@ commands = {
 }
 
 -------------------------------------------
--- process
+-- Soul
 -------------------------------------------
-extension.onTextReceive = function (message)
+soul = setmetatable({}, {
+	__index = function(t, key)
+		local msgType = key:match("^on(.+)Receive$")
+		if msgType then
+			return function(msg)
+				bot.sendMessage(config.masterid, string.format("I received a message (%s). \n```\n%s\n```", msgType, table.encode(msg)), "Markdown")
+			end
+		else
+			return function(msg)
+				bot.sendMessage(config.masterid, string.format("Attempted to index `bot.%s`.", key), "Markdown")
+			end
+		end
+	end
+})
+
+soul.onMessageReceive = function (message)
 	msg = message
 
 	-- To-do: Use entities instead
@@ -374,7 +295,7 @@ extension.onTextReceive = function (message)
 			if v.limit then
 				if v.limit.disable then
 					return bot.sendMessage(msg.chat.id, "Sorry, the command is disabled.", nil, nil, nil, msg.message_id)
-				elseif v.limit.master and msg.from.id ~= settings.masterid then
+				elseif v.limit.master and msg.from.id ~= config.masterid then
 					return bot.sendMessage(msg.chat.id, "Sorry, permission denied.", nil, nil, nil, msg.message_id)
 				elseif (v.limit.match or v.limit.reply) and not ((v.limit.match and msg.text:find(v.limit.match)) or (v.limit.reply and msg.reply_to_message)) then
 					return commands.help.func(k)
@@ -390,7 +311,7 @@ extension.onTextReceive = function (message)
 		end
 	end
 
-	if settings.mute then
+	if config.mute then
 		return
 	end
 
@@ -409,164 +330,38 @@ extension.onTextReceive = function (message)
 	end
 end
 
-extension.onPhotoReceive = function (msg)
-	local text = commands.scan.func(msg.photo[#msg.photo].file_id, true)
-end
-
-extension.onAudioReceive = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (audio). \n" .. table.encode(msg))
-	end
-end
-
-extension.onDocumentReceive = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (document). \n" .. table.encode(msg))
-	end
-end
-
-extension.onStickerReceive = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (sticker). \n" .. table.encode(msg))
-	end
-end
-
-extension.onVideoReceive = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (video). \n" .. table.encode(msg))
-	end
-end
-
-extension.onVoiceReceive = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (voice). \n" .. table.encode(msg))
-	end
-end
-
-extension.onContactReceive = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (contact). \n" .. table.encode(msg))
-	end
-end
-
-extension.onLocationReceive = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (location). \n" .. table.encode(msg))
-	end
-end
-
-extension.onLeftChatParticipant = function (msg)
+soul.onLeftChatParticipantReceive = function (msg)
 	if msg.left_chat_member.username == "Project_Small_Robot" then
-		bot.sendMessage(settings.masterid, "I have been kicked from group [" .. msg.chat.title .. "] by [" .. msg.from.first_name .. " " .. msg.from.last_name .. "](@" .. msg.from.username .. ").")
+		bot.sendMessage(config.masterid, "I have been kicked from group [" .. msg.chat.title .. "] by [" .. msg.from.first_name .. " " .. msg.from.last_name .. "](@" .. msg.from.username .. ").")
 		bot.sendMessage(msg.from.id, "Operation finished.")
 	end
 end
 
-extension.onNewChatParticipant = function (msg)
+soul.onNewChatParticipantReceive = function (msg)
 	if msg.new_chat_member.username == "Project_Small_Robot" then
-		bot.sendMessage(settings.masterid, "I have been added to group [" .. msg.chat.title .. "] by [" .. msg.from.first_name .. " " .. (msg.from.last_name or "") .. "](@" .. msg.from.username .. ").")
+		bot.sendMessage(config.masterid, "I have been added to group [" .. msg.chat.title .. "] by [" .. msg.from.first_name .. " " .. (msg.from.last_name or "") .. "](@" .. msg.from.username .. ").")
 		bot.sendMessage(msg.from.id, "Thanks for your invitation.")
 		bot.sendMessage(msg.chat.id, "Hello everyone, I am Project Small R.")
 	end
 end
 
-extension.onNewChatPhoto = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (NewChatPhoto). \n" .. table.encode(msg))
-	end
-end
-
-extension.onDeleteChatPhoto = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (DeleteChatPhoto). \n" .. table.encode(msg))
-	end
-end
-
-extension.onGroupChatCreated = function (msg)
-	bot.sendMessage(settings.masterid, "I received a message (GroupChatCreated). \n" .. table.encode(msg))
-end
-
-extension.onSupergroupChatCreated = function (msg)
-	bot.sendMessage(settings.masterid, "I received a message (SupergroupChatCreated). \n" .. table.encode(msg))
-end
-
-extension.onChannelChatCreated = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (ChannelChatCreated). \n" .. table.encode(msg))
-	end
-end
-
-extension.onMigrateToChatId = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (MigrateToChatId). \n" .. table.encode(msg))
-	end
-end
-
-extension.MigrateFromChatId = function (msg)
-	if msg.chat.type == "private" then
-		bot.sendMessage(msg.chat.id, "I received a message (MigrateFromChatId). \n" .. table.encode(msg))
-	end
-end
-
-extension.onUnknownTypeReceive = function (msg)
-	bot.sendMessage(settings.masterid, "I received a message (unknown). \n" .. table.encode(msg))
-end
-
-extension.onEditedMessageReceive = function (msg)
-
-end
-
-extension.onInlineQueryReceive = function (msg)
-	bot.sendMessage(settings.masterid, "I received a message (InlineQuery). \n" .. table.encode(msg))
-end
-
-extension.onChosenInlineQueryReceive = function (msg)
-	bot.sendMessage(settings.masterid, "I received a message (ChosenInlineQuery). \n" .. table.encode(msg))
-end
-
-extension.onCallbackQueryReceive = function (msg)
+soul.onCallbackQueryReceive = function (msg)
 	if not msg.from.username then
 		msg.from.username = "$" .. msg.from.id
 	end
 	bot.answerCallbackQuery(msg.id, "Received.")
 end
 
--- to-do: Use metatable instead.
-for k, v in pairs(extension) do
-	if k:find("on.+Receive") then
-		extension[k] = function (msg)
-			if settings.record then
-				if msg.chat and msg.chat.id then
-					msgList[msg.chat.id] = msgList[msg.chat.id] or {}
-					if msg.message_id and not msgList[msg.chat.id][msg.message_id] then
-						msgList[msg.chat.id][msg.message_id] = {
-							{
-								timestamp = msg.date
-							},
-							sender = msg.from.username or (" " .. (msg.from.first_name or "unknown") .. " " .. (msg.from.last_name or "")),
-							from = msg.chat.type == "private" and "private" or "group: " .. tostring(msg.chat.title),
-							chat_id = msg.chat.id,
-							type = k:match("on(.+)Receive")
-						}
-					end
-				end
-			end
-			if settings.debug then
-				print(os.date(), table.encode(msg))
-			end
-			local sta, err = pcall(v, msg)
-			if (not sta) then
-				bot.sendMessage(settings.masterid, "[ERROR]\nfunction: " .. k .. "\n" .. tostring(err))
-				if settings.warning and msg.chat then
-					bot.sendMessage(msg.chat.id, "[ERROR]\nfunction: " .. k .. "\n" .. tostring(err))
-				end
-				lastlog = err
-				etime = os.time()
-			end
-			lastSave = lastSave or os.time()
-			if os.time() - lastSave > 24*60*60 then
-				save()
-				lastSave = os.time()
+for k, v in pairs(soul) do
+	soul[k] = function (msg)
+		if config.debug then
+			print(os.date(), table.encode(msg))
+		end
+		local sta, err = pcall(v, msg)
+		if (not sta) then
+			bot.sendMessage(config.masterid, string.format("[ERROR]\nfunction: `%s`\n```\n%s```", k, tostring(err)), "Markdown")
+			if config.warning and msg.chat then
+				bot.sendMessage(config.masterid, string.format("[ERROR]\nfunction: `%s`\n```\n%s```", k, tostring(err)), "Markdown")
 			end
 		end
 	end

@@ -13,7 +13,24 @@ function get(url)
 	return s
 end
 
-local html = get("sforest.in/api"):match("Available methods(.+)$"):gsub("&#(%d+);", function(str) return string.char(tonumber("0x" .. str)) end)
+local entities = {
+	["&#34;"] = [["]],
+	["&quot;"] = [["]],
+	["&#39;"] = [[']],
+	["&apos;"] = [[']],
+	["&#38;"] = [[&]],
+	["&amp;"] = [[&]],
+	["&#60;"] = [[<]],
+	["&lt;"] = [[<]],
+	["&#62;"] = [[>]],
+	["&gt;"] = [[>]]
+}
+
+local html = get("sforest.in/api"):match("Available methods(.+)$")
+
+for k, v in pairs(entities) do
+	html = html:gsub(k, v)
+end
 
 os.remove("generate-api.lua")
 local f = io.open("generate-api.lua", "a")
@@ -28,12 +45,8 @@ local template = [[
 -------------------------------------------
 function bot.%s(%s)
 %s	local body = {}
-%s	local ret = makeRequest("%s", body)
-	if ret.success == 1 then
-		return cjson.decode(ret.body)
-	else
-		return nil, "failed to request."
-	end
+%s	local ret, msg = makeRequest("%s", body)
+	return ret or msg
 end
 
 ]]
