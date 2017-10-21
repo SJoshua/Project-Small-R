@@ -107,7 +107,7 @@ commands = {
 			reload("utils.lua", "Utils")
 			reload("api.lua", "API")
 			reload("soul.lua", "Soul")
-			
+
 			bot.editMessageText(msg.chat.id, ret.result.message_id, nil, "reloading...\n" .. ((s == "") and "done." or s), "Markdown")
 		end,
 		desc = "Reload my soul."
@@ -270,7 +270,7 @@ soul = setmetatable({}, {
 		local msgType = key:match("^on(.+)Receive$")
 		if msgType then
 			return function(msg)
-				bot.sendMessage(config.masterid, string.format("I received a message (%s). \n```\n%s\n```", msgType, table.encode(msg)), "Markdown")
+				bot.sendMessage(config.masterid, string.format("I received a message \(%s). \n```\n%s\n```", msgType, table.encode(msg)), "Markdown")
 			end
 		else
 			return function(msg)
