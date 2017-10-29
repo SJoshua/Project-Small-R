@@ -45,8 +45,7 @@ local template = [[
 -------------------------------------------
 function bot.%s(%s)
 %s	local body = {}
-%s	local ret, msg = makeRequest("%s", body)
-	return ret or msg
+%s	return makeRequest("%s", body)
 end
 
 ]]

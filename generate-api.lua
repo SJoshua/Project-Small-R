@@ -7,8 +7,7 @@
 -------------------------------------------
 function bot.getMe()
 	local body = {}
-	local ret, msg = makeRequest("getMe", body)
-	return ret or msg
+	return makeRequest("getMe", body)
 end
 
 -------------------------------------------
@@ -39,8 +38,7 @@ function bot.sendMessage(chat_id, text, parse_mode, disable_web_page_preview, di
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendMessage", body)
-	return ret or msg
+	return makeRequest("sendMessage", body)
 end
 
 -------------------------------------------
@@ -68,8 +66,7 @@ function bot.forwardMessage(chat_id, from_chat_id, disable_notification, message
 	body.from_chat_id = from_chat_id
 	body.disable_notification = disable_notification
 	body.message_id = message_id
-	local ret, msg = makeRequest("forwardMessage", body)
-	return ret or msg
+	return makeRequest("forwardMessage", body)
 end
 
 -------------------------------------------
@@ -98,8 +95,7 @@ function bot.sendPhoto(chat_id, photo, caption, disable_notification, reply_to_m
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendPhoto", body)
-	return ret or msg
+	return makeRequest("sendPhoto", body)
 end
 
 -------------------------------------------
@@ -135,8 +131,7 @@ function bot.sendAudio(chat_id, audio, caption, duration, performer, title, disa
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendAudio", body)
-	return ret or msg
+	return makeRequest("sendAudio", body)
 end
 
 -------------------------------------------
@@ -165,8 +160,7 @@ function bot.sendDocument(chat_id, document, caption, disable_notification, repl
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendDocument", body)
-	return ret or msg
+	return makeRequest("sendDocument", body)
 end
 
 -------------------------------------------
@@ -201,8 +195,7 @@ function bot.sendVideo(chat_id, video, duration, width, height, caption, disable
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendVideo", body)
-	return ret or msg
+	return makeRequest("sendVideo", body)
 end
 
 -------------------------------------------
@@ -233,8 +226,7 @@ function bot.sendVoice(chat_id, voice, caption, duration, disable_notification, 
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendVoice", body)
-	return ret or msg
+	return makeRequest("sendVoice", body)
 end
 
 -------------------------------------------
@@ -265,8 +257,7 @@ function bot.sendVideoNote(chat_id, video_note, duration, length, disable_notifi
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendVideoNote", body)
-	return ret or msg
+	return makeRequest("sendVideoNote", body)
 end
 
 -------------------------------------------
@@ -300,8 +291,7 @@ function bot.sendLocation(chat_id, latitude, longitude, live_period, disable_not
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendLocation", body)
-	return ret or msg
+	return makeRequest("sendLocation", body)
 end
 
 -------------------------------------------
@@ -330,8 +320,7 @@ function bot.editMessageLiveLocation(chat_id, message_id, inline_message_id, lat
 	body.latitude = latitude
 	body.longitude = longitude
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("editMessageLiveLocation", body)
-	return ret or msg
+	return makeRequest("editMessageLiveLocation", body)
 end
 
 -------------------------------------------
@@ -350,8 +339,7 @@ function bot.stopMessageLiveLocation(chat_id, message_id, inline_message_id, rep
 	body.message_id = message_id
 	body.inline_message_id = inline_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("stopMessageLiveLocation", body)
-	return ret or msg
+	return makeRequest("stopMessageLiveLocation", body)
 end
 
 -------------------------------------------
@@ -395,8 +383,7 @@ function bot.sendVenue(chat_id, latitude, longitude, title, address, foursquare_
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendVenue", body)
-	return ret or msg
+	return makeRequest("sendVenue", body)
 end
 
 -------------------------------------------
@@ -430,8 +417,7 @@ function bot.sendContact(chat_id, phone_number, first_name, last_name, disable_n
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendContact", body)
-	return ret or msg
+	return makeRequest("sendContact", body)
 end
 
 -------------------------------------------
@@ -454,8 +440,7 @@ function bot.sendChatAction(chat_id, action)
 	local body = {}
 	body.chat_id = chat_id
 	body.action = action
-	local ret, msg = makeRequest("sendChatAction", body)
-	return ret or msg
+	return makeRequest("sendChatAction", body)
 end
 
 -------------------------------------------
@@ -475,8 +460,7 @@ function bot.getUserProfilePhotos(user_id, offset, limit)
 	body.user_id = user_id
 	body.offset = offset
 	body.limit = limit
-	local ret, msg = makeRequest("getUserProfilePhotos", body)
-	return ret or msg
+	return makeRequest("getUserProfilePhotos", body)
 end
 
 -------------------------------------------
@@ -492,8 +476,7 @@ function bot.getFile(file_id)
 	end
 	local body = {}
 	body.file_id = file_id
-	local ret, msg = makeRequest("getFile", body)
-	return ret or msg
+	return makeRequest("getFile", body)
 end
 
 -------------------------------------------
@@ -518,8 +501,7 @@ function bot.kickChatMember(chat_id, user_id, until_date)
 	body.chat_id = chat_id
 	body.user_id = user_id
 	body.until_date = until_date
-	local ret, msg = makeRequest("kickChatMember", body)
-	return ret or msg
+	return makeRequest("kickChatMember", body)
 end
 
 -------------------------------------------
@@ -540,8 +522,7 @@ function bot.unbanChatMember(chat_id, user_id)
 	local body = {}
 	body.chat_id = chat_id
 	body.user_id = user_id
-	local ret, msg = makeRequest("unbanChatMember", body)
-	return ret or msg
+	return makeRequest("unbanChatMember", body)
 end
 
 -------------------------------------------
@@ -572,8 +553,7 @@ function bot.restrictChatMember(chat_id, user_id, until_date, can_send_messages,
 	body.can_send_media_messages = can_send_media_messages
 	body.can_send_other_messages = can_send_other_messages
 	body.can_add_web_page_previews = can_add_web_page_previews
-	local ret, msg = makeRequest("restrictChatMember", body)
-	return ret or msg
+	return makeRequest("restrictChatMember", body)
 end
 
 -------------------------------------------
@@ -610,8 +590,7 @@ function bot.promoteChatMember(chat_id, user_id, can_change_info, can_post_messa
 	body.can_restrict_members = can_restrict_members
 	body.can_pin_messages = can_pin_messages
 	body.can_promote_members = can_promote_members
-	local ret, msg = makeRequest("promoteChatMember", body)
-	return ret or msg
+	return makeRequest("promoteChatMember", body)
 end
 
 -------------------------------------------
@@ -627,8 +606,7 @@ function bot.exportChatInviteLink(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret, msg = makeRequest("exportChatInviteLink", body)
-	return ret or msg
+	return makeRequest("exportChatInviteLink", body)
 end
 
 -------------------------------------------
@@ -651,8 +629,7 @@ function bot.setChatPhoto(chat_id, photo)
 	local body = {}
 	body.chat_id = chat_id
 	body.photo = photo
-	local ret, msg = makeRequest("setChatPhoto", body)
-	return ret or msg
+	return makeRequest("setChatPhoto", body)
 end
 
 -------------------------------------------
@@ -670,8 +647,7 @@ function bot.deleteChatPhoto(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret, msg = makeRequest("deleteChatPhoto", body)
-	return ret or msg
+	return makeRequest("deleteChatPhoto", body)
 end
 
 -------------------------------------------
@@ -694,8 +670,7 @@ function bot.setChatTitle(chat_id, title)
 	local body = {}
 	body.chat_id = chat_id
 	body.title = title
-	local ret, msg = makeRequest("setChatTitle", body)
-	return ret or msg
+	return makeRequest("setChatTitle", body)
 end
 
 -------------------------------------------
@@ -713,8 +688,7 @@ function bot.setChatDescription(chat_id, description)
 	local body = {}
 	body.chat_id = chat_id
 	body.description = description
-	local ret, msg = makeRequest("setChatDescription", body)
-	return ret or msg
+	return makeRequest("setChatDescription", body)
 end
 
 -------------------------------------------
@@ -737,8 +711,7 @@ function bot.pinChatMessage(chat_id, message_id, disable_notification)
 	body.chat_id = chat_id
 	body.message_id = message_id
 	body.disable_notification = disable_notification
-	local ret, msg = makeRequest("pinChatMessage", body)
-	return ret or msg
+	return makeRequest("pinChatMessage", body)
 end
 
 -------------------------------------------
@@ -754,8 +727,7 @@ function bot.unpinChatMessage(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret, msg = makeRequest("unpinChatMessage", body)
-	return ret or msg
+	return makeRequest("unpinChatMessage", body)
 end
 
 -------------------------------------------
@@ -771,8 +743,7 @@ function bot.leaveChat(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret, msg = makeRequest("leaveChat", body)
-	return ret or msg
+	return makeRequest("leaveChat", body)
 end
 
 -------------------------------------------
@@ -788,8 +759,7 @@ function bot.getChat(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret, msg = makeRequest("getChat", body)
-	return ret or msg
+	return makeRequest("getChat", body)
 end
 
 -------------------------------------------
@@ -805,8 +775,7 @@ function bot.getChatAdministrators(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret, msg = makeRequest("getChatAdministrators", body)
-	return ret or msg
+	return makeRequest("getChatAdministrators", body)
 end
 
 -------------------------------------------
@@ -822,8 +791,7 @@ function bot.getChatMembersCount(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret, msg = makeRequest("getChatMembersCount", body)
-	return ret or msg
+	return makeRequest("getChatMembersCount", body)
 end
 
 -------------------------------------------
@@ -844,8 +812,7 @@ function bot.getChatMember(chat_id, user_id)
 	local body = {}
 	body.chat_id = chat_id
 	body.user_id = user_id
-	local ret, msg = makeRequest("getChatMember", body)
-	return ret or msg
+	return makeRequest("getChatMember", body)
 end
 
 -------------------------------------------
@@ -866,8 +833,7 @@ function bot.setChatStickerSet(chat_id, sticker_set_name)
 	local body = {}
 	body.chat_id = chat_id
 	body.sticker_set_name = sticker_set_name
-	local ret, msg = makeRequest("setChatStickerSet", body)
-	return ret or msg
+	return makeRequest("setChatStickerSet", body)
 end
 
 -------------------------------------------
@@ -883,8 +849,7 @@ function bot.deleteChatStickerSet(chat_id)
 	end
 	local body = {}
 	body.chat_id = chat_id
-	local ret, msg = makeRequest("deleteChatStickerSet", body)
-	return ret or msg
+	return makeRequest("deleteChatStickerSet", body)
 end
 
 -------------------------------------------
@@ -910,8 +875,7 @@ function bot.answerCallbackQuery(callback_query_id, text, show_alert, url, cache
 	body.show_alert = show_alert
 	body.url = url
 	body.cache_time = cache_time
-	local ret, msg = makeRequest("answerCallbackQuery", body)
-	return ret or msg
+	return makeRequest("answerCallbackQuery", body)
 end
 
 -------------------------------------------
@@ -939,8 +903,7 @@ function bot.editMessageText(chat_id, message_id, inline_message_id, text, parse
 	body.parse_mode = parse_mode
 	body.disable_web_page_preview = disable_web_page_preview
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("editMessageText", body)
-	return ret or msg
+	return makeRequest("editMessageText", body)
 end
 
 -------------------------------------------
@@ -961,8 +924,7 @@ function bot.editMessageCaption(chat_id, message_id, inline_message_id, caption,
 	body.inline_message_id = inline_message_id
 	body.caption = caption
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("editMessageCaption", body)
-	return ret or msg
+	return makeRequest("editMessageCaption", body)
 end
 
 -------------------------------------------
@@ -981,8 +943,7 @@ function bot.editMessageReplyMarkup(chat_id, message_id, inline_message_id, repl
 	body.message_id = message_id
 	body.inline_message_id = inline_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("editMessageReplyMarkup", body)
-	return ret or msg
+	return makeRequest("editMessageReplyMarkup", body)
 end
 
 -------------------------------------------
@@ -1003,8 +964,7 @@ function bot.deleteMessage(chat_id, message_id)
 	local body = {}
 	body.chat_id = chat_id
 	body.message_id = message_id
-	local ret, msg = makeRequest("deleteMessage", body)
-	return ret or msg
+	return makeRequest("deleteMessage", body)
 end
 
 -------------------------------------------
@@ -1031,8 +991,7 @@ function bot.sendSticker(chat_id, sticker, disable_notification, reply_to_messag
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendSticker", body)
-	return ret or msg
+	return makeRequest("sendSticker", body)
 end
 
 -------------------------------------------
@@ -1048,8 +1007,7 @@ function bot.getStickerSet(name)
 	end
 	local body = {}
 	body.name = name
-	local ret, msg = makeRequest("getStickerSet", body)
-	return ret or msg
+	return makeRequest("getStickerSet", body)
 end
 
 -------------------------------------------
@@ -1070,8 +1028,7 @@ function bot.uploadStickerFile(user_id, png_sticker)
 	local body = {}
 	body.user_id = user_id
 	body.png_sticker = png_sticker
-	local ret, msg = makeRequest("uploadStickerFile", body)
-	return ret or msg
+	return makeRequest("uploadStickerFile", body)
 end
 
 -------------------------------------------
@@ -1111,8 +1068,7 @@ function bot.createNewStickerSet(user_id, name, title, png_sticker, emojis, cont
 	body.emojis = emojis
 	body.contains_masks = contains_masks
 	body.mask_position = mask_position
-	local ret, msg = makeRequest("createNewStickerSet", body)
-	return ret or msg
+	return makeRequest("createNewStickerSet", body)
 end
 
 -------------------------------------------
@@ -1145,8 +1101,7 @@ function bot.addStickerToSet(user_id, name, png_sticker, emojis, mask_position)
 	body.png_sticker = png_sticker
 	body.emojis = emojis
 	body.mask_position = mask_position
-	local ret, msg = makeRequest("addStickerToSet", body)
-	return ret or msg
+	return makeRequest("addStickerToSet", body)
 end
 
 -------------------------------------------
@@ -1167,8 +1122,7 @@ function bot.setStickerPositionInSet(sticker, position)
 	local body = {}
 	body.sticker = sticker
 	body.position = position
-	local ret, msg = makeRequest("setStickerPositionInSet", body)
-	return ret or msg
+	return makeRequest("setStickerPositionInSet", body)
 end
 
 -------------------------------------------
@@ -1184,8 +1138,7 @@ function bot.deleteStickerFromSet(sticker)
 	end
 	local body = {}
 	body.sticker = sticker
-	local ret, msg = makeRequest("deleteStickerFromSet", body)
-	return ret or msg
+	return makeRequest("deleteStickerFromSet", body)
 end
 
 -------------------------------------------
@@ -1216,8 +1169,7 @@ function bot.answerInlineQuery(inline_query_id, results, cache_time, is_personal
 	body.next_offset = next_offset
 	body.switch_pm_text = switch_pm_text
 	body.switch_pm_parameter = switch_pm_parameter
-	local ret, msg = makeRequest("answerInlineQuery", body)
-	return ret or msg
+	return makeRequest("answerInlineQuery", body)
 end
 
 -------------------------------------------
@@ -1292,8 +1244,7 @@ function bot.sendInvoice(chat_id, title, description, payload, provider_token, s
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendInvoice", body)
-	return ret or msg
+	return makeRequest("sendInvoice", body)
 end
 
 -------------------------------------------
@@ -1318,8 +1269,7 @@ function bot.answerShippingQuery(shipping_query_id, ok, shipping_options, error_
 	body.ok = ok
 	body.shipping_options = shipping_options
 	body.error_message = error_message
-	local ret, msg = makeRequest("answerShippingQuery", body)
-	return ret or msg
+	return makeRequest("answerShippingQuery", body)
 end
 
 -------------------------------------------
@@ -1342,8 +1292,7 @@ function bot.answerPreCheckoutQuery(pre_checkout_query_id, ok, error_message)
 	body.pre_checkout_query_id = pre_checkout_query_id
 	body.ok = ok
 	body.error_message = error_message
-	local ret, msg = makeRequest("answerPreCheckoutQuery", body)
-	return ret or msg
+	return makeRequest("answerPreCheckoutQuery", body)
 end
 
 -------------------------------------------
@@ -1370,8 +1319,7 @@ function bot.sendGame(chat_id, game_short_name, disable_notification, reply_to_m
 	body.disable_notification = disable_notification
 	body.reply_to_message_id = reply_to_message_id
 	body.reply_markup = reply_markup
-	local ret, msg = makeRequest("sendGame", body)
-	return ret or msg
+	return makeRequest("sendGame", body)
 end
 
 -------------------------------------------
@@ -1402,8 +1350,7 @@ function bot.setGameScore(user_id, score, force, disable_edit_message, chat_id, 
 	body.chat_id = chat_id
 	body.message_id = message_id
 	body.inline_message_id = inline_message_id
-	local ret, msg = makeRequest("setGameScore", body)
-	return ret or msg
+	return makeRequest("setGameScore", body)
 end
 
 -------------------------------------------
@@ -1427,7 +1374,6 @@ function bot.getGameHighScores(user_id, chat_id, message_id, inline_message_id)
 	body.chat_id = chat_id
 	body.message_id = message_id
 	body.inline_message_id = inline_message_id
-	local ret, msg = makeRequest("getGameHighScores", body)
-	return ret or msg
+	return makeRequest("getGameHighScores", body)
 end
 

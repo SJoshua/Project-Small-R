@@ -15,26 +15,43 @@ dofile("config.lua")
 -------------------------------------------
 -- info
 -------------------------------------------
-local dead_flag = false
+local knowledge = {
+	"conversation"
+}
 
-dofile("knowledge")
+local memory = {
+	"msgList"
+}
 
 -------------------------------------------
 -- utils
 -------------------------------------------
 dofile("utils.lua")
 
-function save()
+function bot.save()
 	local f = io.open("database", "w")
-	-- todo
+	f:write(string.format("-------------------------------------------\n-- Project Small R\n-- Database\n-- Update @ %s\n-------------------------------------------\n", os.date()))
+	for k in pairs(memory) do
+		if type(_G[k]) == "table" then
+			f:write(string.format("%s = %s\n\n", k, table.encode(_G[k])))
+		end
+	end
 	f:close()
 end
 
-function load()
-	dofile(database)
+function bot.load()
+	dofile("knowledge")
+	for k in pairs(knowledge) do
+		_G[k] = _G[k] or {}
+	end
+
+	dofile("database")
+	for k in pairs(memory) do
+		_G[k] = _G[k] or {}
+	end
 end
 
-function backup()
+function bot.backup()
 	os.execute("rm database.bak")
 	os.execute("cp database database.bak")
 end
@@ -160,16 +177,6 @@ commands = {
 		end,
 		desc = "Unpack current message."
 	},
-	shutdown = {
-		func = function()
-			bot.sendMessage(msg.chat.id, "Okay. Send me any message to shutdown.")
-			dead_flag = true
-		end,
-		desc = "Stop me.",
-		limit = {
-			master = true
-		}
-	},
 	exec = {
 		func = function()
 			message = msg
@@ -195,7 +202,6 @@ commands = {
 					end
 					bot.sendMessage(msg.chat.id, ts .. "[END]")
 				end
-				--bot.sendMessage(msg.from.id, "Who are you?")
 			end
 		end,
 		form = "/exec <code>",
@@ -249,7 +255,7 @@ commands = {
 	},
 	review = {
 		func = function()
-			if not msg.reply_to_message.text:find("/revive") then
+			if not msg.reply_to_message.text:find("/review") then
 				return soul.onTextReceive(msg.reply_to_message)
 			end
 		end,
@@ -315,9 +321,48 @@ soul.onMessageReceive = function (message)
 		return
 	end
 
+	for keyword, reply in pairs(conversation) do
+		local match = false
+		if type(keyword) == "string" then
+			match = msg.text:find(keyword)
+		elseif type(keyword) == "table" then
+			for _, keys in pairs(keyword) do
+				match = match or msg.text:find(keyword)
+			end
+			if keyword.reply and not msg.reply_to_message then
+				match = false
+			end
+		elseif type(keyword) == "function" then
+			match = keyword()
+		end
+
+		if match then
+			local ans, rep
+			if type(reply) == "string" then
+				ans = reply
+			elseif type(reply) == "table" then
+				ans = rand(unpack(reply))
+			elseif type(reply) == "function" then
+				ans = tostring(reply())
+			end
+
+			if reply.reply then
+				rep = msg.message_id
+			elseif reply.reply_to_reply and msg.reply_to_message then
+				rep = msg.reply_to_message.message_id
+			end
+
+			if ans:find("^sticker#%S-$") then
+				return bot.sendSticker(msg.chat.id, ans:match("^sticker#(%S-)$"), nil, rep)
+			else
+				return bot.sendMessage(msg.chat.id, ans, reply.type or "Markdown", nil, nil, rep)
+			end
+		end
+	end
+
 	for _, v in pairs(conversation) do
 		for i = 1, #v[1] do
-			if msg.text:find(v[1][i]) and (not v[3]) then
+			if msg.text:find(v[1][i]) then
 				if v[4] then
 					if msg.reply_to_message then
 						return bot.sendMessage(msg.chat.id, rand(unpack(v[2])), nil, nil, nil, msg.reply_to_message.message_id)
@@ -359,9 +404,9 @@ for k, v in pairs(soul) do
 		end
 		local sta, err = pcall(v, msg)
 		if (not sta) then
-			bot.sendMessage(config.masterid, string.format("[ERROR]\nfunction: `%s`\n```\n%s```", k, tostring(err)), "Markdown")
+			bot.sendMessage(config.masterid, string.format("\\[ERROR]\nfunction: `%s`\n```\n%s```", k, tostring(err)), "Markdown")
 			if config.warning and msg.chat then
-				bot.sendMessage(config.masterid, string.format("[ERROR]\nfunction: `%s`\n```\n%s```", k, tostring(err)), "Markdown")
+				bot.sendMessage(config.masterid, string.format("\\[ERROR]\nfunction: `%s`\n```\n%s```", k, tostring(err)), "Markdown")
 			end
 		end
 	end

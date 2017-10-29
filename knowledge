@@ -1,1 +1,7 @@
-conversation = conversation or {}
+-------------------------------------------
+-- Project Small R
+-- Knowledge
+-------------------------------------------
+conversation = {
+	["ping"] = "pong!"
+}
