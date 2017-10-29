@@ -3,7 +3,6 @@
 -- Utils
 -- Au: SJoshua
 -------------------------------------------
-
 base64 = {
 	b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
 	enc = function(data)
@@ -134,4 +133,43 @@ function table.encode(t, n)
 	end
 	ret = ret .. tabs .. "}"
 	return ret
+end
+
+function htmlDecode(str)
+	local entities = {
+		["&#34;"] = [["]],
+		["&quot;"] = [["]],
+		["&#39;"] = [[']],
+		["&apos;"] = [[']],
+		["&#38;"] = [[&]],
+		["&amp;"] = [[&]],
+		["&#60;"] = [[<]],
+		["&lt;"] = [[<]],
+		["&#62;"] = [[>]],
+		["&gt;"] = [[>]]
+	}
+	for k, v in pairs(entities) do
+		str = str:gsub(k, v)
+	end
+	return str
+end
+
+function readFile(fn)
+	local f = io.open(fn, "rb")
+	if not f then
+		return "(Not found)"
+	end
+	local data = {
+		filename = fn,
+		data = f:read("*a")
+	}
+	f:close()
+	return data
+end
+
+function reload(file, name)
+	local sta, err = pcall(dofile, file)
+	if not sta then
+		s = s .. "error @ " .. name .. ":\n```\n" .. err .. "\n```\n"
+	end
 end

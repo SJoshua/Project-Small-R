@@ -265,6 +265,25 @@ commands = {
 			reply = true,
 			master = true
 		}
+	},
+	upgrade = {
+		func = function()
+			local ret = bot.sendMessage(msg.chat.id, "upgrading...", nil, nil, nil, msg.message_id)
+			os.execute("cp api.lua api.lua.bak")
+			os.execute("lua generator.lua")
+			local f = io.open("generate-api.lua", "r")
+			local code = f:read("*a")
+			f:close()
+			local f = io.open("api.lua", "r")
+			local source = f:read("*a")
+			f:close()
+			local f = io.open("api.lua", "w")
+			f:write(source:gsub("(Mark @ Generator%s*).-$", "%1" .. code))
+			f:close()
+			dofile("api.lua")
+			bot.editMessageText(msg.chat.id, ret.result.message_id, nil, "upgrading...\n" .. "done.", "Markdown")
+		end,
+		desc = "Upgrade Telegram Bot API Code."
 	}
 }
 
@@ -276,7 +295,7 @@ soul = setmetatable({}, {
 		local msgType = key:match("^on(.+)Receive$")
 		if msgType then
 			return function(msg)
-				bot.sendMessage(config.masterid, string.format("I received a message \(%s). \n```\n%s\n```", msgType, table.encode(msg)), "Markdown")
+				bot.sendMessage(config.masterid, string.format("I received a message (%s). \n```\n%s\n```", msgType, table.encode(msg)), "Markdown")
 			end
 		else
 			return function(msg)
