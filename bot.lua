@@ -9,5 +9,4 @@ dofile("config.lua")
 
 print("Project Small R: Link Start.")
 
-bot.load()
 bot.run()
