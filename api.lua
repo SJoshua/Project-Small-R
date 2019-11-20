@@ -219,7 +219,6 @@ end
 -------------------------------------------
 function bot.run()
 	local offset = 0
-	bot.me = bot.getMe().result
 	while true do
 		local updates = bot.getUpdates(offset, config.limit, config.timeout)
 		local f = io.open("timestamp", "w")

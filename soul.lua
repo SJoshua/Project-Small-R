@@ -170,6 +170,10 @@ soul = setmetatable({}, {
 soul.onMessageReceive = function (message)
 	msg = message
 
+	if not bot.me then
+		bot.me = bot.getMe().result
+	end
+
 	if os.time() - msg.date > config.ignore then
 		return
 	end
