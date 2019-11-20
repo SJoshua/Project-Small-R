@@ -3,10 +3,13 @@
 -- Telegram Bot API
 -- Au: SJoshua
 -------------------------------------------
+local http = require("socket.http")
 local https = require("ssl.https")
 local ltn12 = require("ltn12")
 local cjson = require("cjson")
 local encode = require("multipart-post").encode
+
+https.TIMEOUT = 5
 
 bot = {}
 
@@ -146,28 +149,49 @@ end
 function makeRequest(method, parameters)
 	local response = {}
 
+	empty = true
+
 	for k, v in pairs(parameters) do
 		if type(v) == "number" or type(v) == "boolean" then
 			parameters[k] = tostring(v)
 		end
+		empty = false
 	end
 
-	local body, boundary = encode(parameters)
+	print(os.date() .. "| [Request] " .. tostring(method))
 
-	local success, code, headers, status = https.request{
-		url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
-		method = "POST",
-		headers = {
-			["Content-Type"] =  "multipart/form-data; boundary=" .. boundary,
-			["Content-Length"] = string.len(body),
-		},
-		source = ltn12.source.string(body),
-		sink = ltn12.sink.table(response),
-	}
+	local success, code, headers, status
+
+	if empty then
+		success, code, headers, status = https.request{
+			url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
+			method = "GET"
+		}
+	else 
+		local body, boundary = encode(parameters)
+		
+		success, code, headers, status = https.request{
+			url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
+			method = "POST",
+			headers = {
+				["Content-Type"] =  "multipart/form-data; boundary=" .. boundary,
+				["Content-Length"] = string.len(body),
+			},
+			source = ltn12.source.string(body),
+			sink = ltn12.sink.table(response),
+		}
+	end
+
+	print(os.date() .. "| [Response] " .. tostring(success))
 
 	if success then
 		local status, msg = pcall(cjson.decode, table.concat(response))
 		if status then
+			if not msg.ok then
+				if not (method == "createNewStickerSet" and msg.error_code == 400) then -- ignore sticker function
+					bot.sendMessage(config.masterid, "*Failed: API " .. method .. "*\n```\n" .. table.encode(msg) .. "\n```\n*Request:*\n```\n" .. table.encode(parameters) .. "\n```", "Markdown")
+				end
+			end
 			return msg
 		else
 			return nil, "failed to decode."
@@ -177,7 +201,6 @@ function makeRequest(method, parameters)
 	end
 end
 
-
 -------------------------------------------
 -- function @ downloadFile
 -- File
@@ -186,7 +209,7 @@ end
 function bot.downloadFile(file_id, path)
 	local ret = bot.getFile(file_id)
 	if ret and ret.ok then
-		os.execute(string.format("wget -O %s https://api.telegram.org/file/bot%s/%s", path or "tmp", config.token, ret.result.file_path))
+		os.execute(string.format("wget --timeout=5 -O %s https://api.telegram.org/file/bot%s/%s", path or "tmp", config.token, ret.result.file_path))
 	end
 end
 
@@ -196,8 +219,12 @@ end
 -------------------------------------------
 function bot.run()
 	local offset = 0
+	bot.me = bot.getMe().result
 	while true do
 		local updates = bot.getUpdates(offset, config.limit, config.timeout)
+		local f = io.open("timestamp", "w")
+		f:write(os.time())
+		f:close()
 		if updates and updates.result then
 			for key, upd in pairs(updates.result) do
 				soul[string.format("on%sReceive", analyzeMessageType(upd))](upd.message or upd.edited_message or upd.channel_post or upd.edited_channel_post or upd.inline_query or upd.chosen_inline_result or upd.callback_query or upd.shipping_query or upd.pre_checkout_query)

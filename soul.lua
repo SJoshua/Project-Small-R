@@ -6,6 +6,8 @@
 cjson = require("cjson")
 socket = require("socket")
 http = require("socket.http")
+sqlite3_driver = require("luasql.sqlite3")
+sqlite3_env = sqlite3_driver.sqlite3()
 
 -------------------------------------------
 -- config
@@ -13,48 +15,10 @@ http = require("socket.http")
 dofile("config.lua")
 
 -------------------------------------------
--- info
--------------------------------------------
-local knowledge = {
-	"conversation"
-}
-
-local memory = {
-	"msgList"
-}
-
--------------------------------------------
 -- utils
 -------------------------------------------
 dofile("utils.lua")
-
-function bot.save()
-	local f = io.open("database", "w")
-	f:write(string.format("-------------------------------------------\n-- Project Small R\n-- Database\n-- Update @ %s\n-------------------------------------------\n", os.date()))
-	for k in pairs(memory) do
-		if type(_G[k]) == "table" then
-			f:write(string.format("%s = %s\n\n", k, table.encode(_G[k])))
-		end
-	end
-	f:close()
-end
-
-function bot.load()
-	dofile("knowledge")
-	for k in pairs(knowledge) do
-		_G[k] = _G[k] or {}
-	end
-
-	dofile("database")
-	for k in pairs(memory) do
-		_G[k] = _G[k] or {}
-	end
-end
-
-function bot.backup()
-	os.execute("rm database.bak")
-	os.execute("cp database database.bak")
-end
+dofile("knowledge")
 
 -------------------------------------------
 -- commands
@@ -67,18 +31,19 @@ end
 --   limit: {
 --     disable: even for master
 --     master: master command
---     match: condition for command
---     reply: condition for command
+--     match: condition for command (pattern match)
+--     reply: condition for command (boolean)
 --   }
 -- }
 -------------------------------------------
 commands = {
 	start = {
 		func = function()
-			bot.sendMessage(msg.chat.id, "Hello. This is Project Small R.")
+			bot.sendMessage(msg.chat.id, "Hello, this is " .. bot.me.first_name .. ".")
 		end,
-		desc = "Just start."
+		desc = "Start with me!"
 	},
+	
 	help = {
 		generate = function(all)
 			local t = {}
@@ -109,6 +74,7 @@ commands = {
 		desc = "Help.",
 		help = "e.g. `/help find`"
 	},
+	
 	reload = {
 		func = function()
 			local ret = bot.sendMessage(msg.chat.id, "reloading...", nil, nil, nil, msg.message_id)
@@ -129,6 +95,7 @@ commands = {
 		end,
 		desc = "Reload my soul."
 	},
+	
 	cmdlist = {
 		func = function ()
 			local t = {}
@@ -149,123 +116,7 @@ commands = {
 			master = true
 		}
 	},
-	base64 = {
-		func = function()
-			local txt = msg.text:match("/base64%s*(%S.-)$")
-			return bot.sendMessage(msg.chat.id, "[Encode]\n" .. tostring(base64.enc(txt)))
-		end,
-		form = "/base64 <text>",
-		desc = "Encode with base64.",
-		limit = {
-			match = "/base64%s*(%S.-)$"
-		}
-	},
-	debase64 = {
-		func = function()
-			local txt = msg.text:match("/debase64%s*(%S.-)$")
-			return bot.sendMessage(msg.chat.id, "[Decode]\n" .. tostring(base64.dec(txt)))
-		end,
-		form = "/debase64 <text>",
-		desc = "Decode with base64.",
-		limit = {
-			match = "/debase64%s*(%S.-)$"
-		}
-	},
-	unpack = {
-		func = function()
-			bot.sendMessage(msg.chat.id, "```\n" .. table.encode(msg) .. "\n```", "Markdown")
-		end,
-		desc = "Unpack current message."
-	},
-	exec = {
-		func = function()
-			message = msg
-			if msg.from.username == config.master then
-				if msg.text:find("os.exit") then
-					bot.sendMessage(msg.chat.id, "[WARNING]\nPlease use /shutdown instead.")
-					return
-				end
-				local t = {pcall(loadstring(string.match(msg.text, "/exec(.*)")))}
-				local ts = string.format("[status] %s\n", tostring(t[1]))
-				for i = 2, table.maxn(t) do
-					ts = ts .. string.format("[return %d] %s\n", i-1, tostring(t[i]))
-				end
-				bot.sendMessage(msg.chat.id, ts .. "[END]")
-			elseif config.dolua then
-				if msg.text:find("for") or msg.text:find("while") or msg.text:find("until") then
-					bot.sendMessage(msg.chat.id, "Sorry, but no looping.")
-				else
-					local t = {pcall(loadstring("_ENV = sandbox{'math', 'string', 'pairs', 'cjson', 'table', 'message', 'base64', 'md5'}; string.dump = nil; " .. string.match(msg.text, "/exec(.*)")))}
-					local ts = string.format("[status] %s\n", tostring(t[1]))
-					for i = 2, table.maxn(t) do
-						ts = ts .. string.format("[return %d] %s\n", i-1, tostring(t[i]))
-					end
-					bot.sendMessage(msg.chat.id, ts .. "[END]")
-				end
-			end
-		end,
-		form = "/exec <code>",
-		desc = "Execute code in lua.",
-		help = "`string`, `math`, `table`, `base64` and `md5` are available.\ne.g.\n  `/exec return 1+1`\n  `/exec return string.rep(\"233\\n\", 5)`\n  `/exec return table.encode(base64)`",
-		limit = {
-			match = "/exec%s*(%S.+)"
-		}
-	},
-	mute = {
-		func = function()
-			config.mute = true
-			bot.sendMessage(msg.chat.id, "Okay.", nil, nil, nil, msg.message_id)
-		end,
-		desc = "Stop talking.",
-		limit = {
-			master = true
-		}
-	},
- 	unmute = {
-		func = function()
-			config.mute = true
-			bot.sendMessage(msg.chat.id, "Okay.", nil, nil, nil, msg.message_id)
-		end,
-		desc = "Let's go!",
-		limit = {
-			master = true
-		}
-	},
-	shell = {
-		func = function()
-			local cmd = msg.text:match("/shell%s*(.-)%s*$")
-			os.execute(cmd .. " > tmp")
-			local f = io.open("tmp", "r")
-			local res
-			if f then
-				res = f:read("*a")
-				f:close()
-			else
-				res = "failed to read."
-			end
-			bot.sendMessage(msg.chat.id, "[result]\n" .. tostring(res), nil, nil, nil, msg.message_id)
-		end,
-		form = "/shell <command>",
-		desc = "Execute shell.",
-		help = "e.g. `/shell echo hey`",
-		limit = {
-			master = true,
-			match = "/shell%s*(.-)%s*$"
-		}
-	},
-	review = {
-		func = function()
-			if not msg.reply_to_message.text:find("/review") then
-				return soul.onTextReceive(msg.reply_to_message)
-			end
-		end,
-		desc = "Process a message again.",
-		help = "Reply to message.",
-		limit = {
-			reply = true,
-			master = true
-		}
-	},
+	
 	upgrade = {
 		func = function()
 			local ret = bot.sendMessage(msg.chat.id, "upgrading...", nil, nil, nil, msg.message_id)
@@ -278,13 +129,24 @@ commands = {
 			local source = f:read("*a")
 			f:close()
 			local f = io.open("api.lua", "w")
-			f:write(source:gsub("(Mark @ Generator%s*).-$", "%1" .. code))
+			f:write((source:gsub("(Mark @ Generator%s*).-$", "%1" .. code)))
 			f:close()
 			dofile("api.lua")
-			bot.editMessageText(msg.chat.id, ret.result.message_id, nil, "upgrading...\n" .. "done.", "Markdown")
+			bot.editMessageText(msg.chat.id, ret.result.message_id, nil, "upgrading...\ndone.", "Markdown")
 		end,
 		desc = "Upgrade Telegram Bot API Code."
-	}
+	},
+	
+	delete = {
+		func = function()
+			bot.deleteMessage(msg.chat.id, msg.reply_to_message.message_id)
+		end,
+		desc = "Delete message.",
+		limit = {
+			master = true,
+			reply = true
+		}
+	},
 }
 
 -------------------------------------------
@@ -308,19 +170,26 @@ soul = setmetatable({}, {
 soul.onMessageReceive = function (message)
 	msg = message
 
-	-- To-do: Use entities instead
-	msg.text = msg.text:gsub("@Project_Small_Robot", "")
+	if os.time() - msg.date > config.ignore then
+		return
+	end
+
+	if not msg.text then
+		return bot.sendMessage(config.masterid, table.encode(msg))
+	end
+
+	msg.text = msg.text:gsub("@" .. bot.me.username, "")
 
 	if msg.text:find("/(%S+)@(%S+)[Bb][Oo][Tt]") then
 		return
 	end
-
+	
 	for k, v in pairs(commands) do
-		if msg.text:find("^%s*/" .. k) then
+		if msg.text:find("^%s*/" .. k) and not msg.text:find("^%s*/" .. k .. "%S") then
 			if v.limit then
 				if v.limit.disable then
 					return bot.sendMessage(msg.chat.id, "Sorry, the command is disabled.", nil, nil, nil, msg.message_id)
-				elseif v.limit.master and msg.from.id ~= config.masterid then
+				elseif v.limit.master and msg.from.username ~= config.master then
 					return bot.sendMessage(msg.chat.id, "Sorry, permission denied.", nil, nil, nil, msg.message_id)
 				elseif (v.limit.match or v.limit.reply) and not ((v.limit.match and msg.text:find(v.limit.match)) or (v.limit.reply and msg.reply_to_message)) then
 					return commands.help.func(k)
@@ -345,8 +214,8 @@ soul.onMessageReceive = function (message)
 		if type(keyword) == "string" then
 			match = msg.text:find(keyword)
 		elseif type(keyword) == "table" then
-			for _, keys in pairs(keyword) do
-				match = match or msg.text:find(keyword)
+			for i = 1, #keyword do
+				match = match or msg.text:find(keyword[i])
 			end
 			if keyword.reply and not msg.reply_to_message then
 				match = false
@@ -373,6 +242,8 @@ soul.onMessageReceive = function (message)
 
 			if ans:find("^sticker#%S-$") then
 				return bot.sendSticker(msg.chat.id, ans:match("^sticker#(%S-)$"), nil, rep)
+			elseif ans:find("^document#%S-$") then
+				return bot.sendDocument(msg.chat.id, ans:match("^document#(%S-)$"), nil, nil, rep)
 			else
 				return bot.sendMessage(msg.chat.id, ans, reply.type or "Markdown", nil, nil, rep)
 			end
@@ -380,39 +251,150 @@ soul.onMessageReceive = function (message)
 	end
 end
 
+soul.onEditedMessageReceive = function (msg)
+	-- process
+end
+
 soul.onLeftChatMembersReceive = function (msg)
-	if msg.left_chat_member.username == "Project_Small_Robot" then
-		bot.sendMessage(config.masterid, "I have been kicked from group [" .. msg.chat.title .. "] by [" .. msg.from.first_name .. " " .. msg.from.last_name .. "](@" .. msg.from.username .. ").")
-		bot.sendMessage(msg.from.id, "Operation finished.")
-	end
+	
 end
 
 soul.onNewChatMembersReceive = function (msg)
-	if msg.new_chat_member.username == "Project_Small_Robot" then
-		bot.sendMessage(config.masterid, "I have been added to group [" .. msg.chat.title .. "] by [" .. msg.from.first_name .. " " .. (msg.from.last_name or "") .. "](@" .. msg.from.username .. ").")
-		bot.sendMessage(msg.from.id, "Thanks for your invitation.")
-		bot.sendMessage(msg.chat.id, "Hello everyone, I am Project Small R.")
-	end
+	
+end
+
+soul.onPhotoReceive = function(msg)
+	-- process
+end
+
+soul.onAudioReceive = function (msg)
+	-- process
+end
+
+soul.onVideoReceive = function (msg)
+	-- process
+end
+
+soul.onDocumentReceive = function (msg)
+	-- process
+end
+
+soul.onGameReceive = function (msg)
+	-- process
+end
+
+soul.onStickerReceive = function (msg)
+	
+end
+
+soul.onVideoNoteReceive = function (msg)
+
+end
+
+soul.onContactReceive = function (msg)
+
+end
+
+soul.onLocationReceive = function (msg)
+
+end
+
+soul.onVenueReceive = function (msg)
+
+end
+
+soul.onNewChatTitleReceive = function (msg)
+
+end
+
+soul.onNewChatPhotoReceive = function (msg)
+
+end
+
+soul.onDeleteChatPhotoReceive = function (msg)
+
+end
+
+soul.onGroupChatCreatedReceive = function (msg)
+
+end
+
+soul.onSupergroupChatCreatedReceive = function (msg)
+
+end
+
+soul.onChannelChatCreatedReceive = function (msg)
+
+end
+
+soul.onMigrateToChatReceive = function (msg)
+
+end
+
+soul.onPinnedMessageReceive = function (msg)
+
+end
+
+soul.onInvoiceReceive = function (msg)
+
+end
+
+soul.onSuccessfulPaymentReceive = function (msg)
+
+end
+
+soul.onChannelMessageReceive = function (msg)
+
+end
+
+soul.onChannelPostReceive = function (msg)
+
+end
+
+soul.onEditedChannelPostReceive = function (msg)
+
+end
+
+soul.onInlineQueryReceive = function (msg)
+
+end
+
+soul.onChosenInlineResultReceive = function (msg)
+
+end
+
+soul.onCallbackQueryReceive = function (msg)
+
+end
+
+soul.onShippingQueryReceive = function (msg)
+
+end
+
+soul.onPreCheckoutQueryReceive = function (msg)
+
 end
 
 soul.onCallbackQueryReceive = function (msg)
 	if not msg.from.username then
 		msg.from.username = "$" .. msg.from.id
 	end
-	bot.answerCallbackQuery(msg.id, "Received.")
+	-- todo
 end
+
 
 for k, v in pairs(soul) do
 	soul[k] = function (msg)
 		if config.debug then
 			print(os.date(), table.encode(msg))
 		end
+		if config.record then
+			-- to-do process
+			
+		end
 		local sta, err = pcall(v, msg)
-		if (not sta) then
+		if not sta then
 			bot.sendMessage(config.masterid, string.format("\\[ERROR]\nfunction: `%s`\n```\n%s```", k, tostring(err)), "Markdown")
-			if config.warning and msg.chat then
-				bot.sendMessage(config.masterid, string.format("\\[ERROR]\nfunction: `%s`\n```\n%s```", k, tostring(err)), "Markdown")
-			end
 		end
 	end
 end

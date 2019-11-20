@@ -14,4 +14,3 @@ A Telegram Bot Framework in Lua.
 
 ## Bots
 * [@small_robot](https://t.me/small_robot): A chat bot with some interesting features in English, Chinese and Japanese.
-* [@Project_Small_Robot](https://t.me/Project_Small_Robot): A bot for this project.
