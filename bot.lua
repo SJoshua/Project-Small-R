@@ -82,6 +82,15 @@ function bot.reload()
     soul = require("soul")
 end
 
+function bot.getUpdates(offset, limit, timeout, allowed_updates)
+    local body = {}
+    body.offset = offset
+    body.limit = limit
+    body.timeout = timeout
+    body.allowed_updates = allowed_updates
+    return api.makeRequest("getUpdates", body)
+end
+
 function bot.run()
     logger:info("link start.")
 
@@ -90,9 +99,11 @@ function bot.run()
         bot[k] = v
     end
 
-    bot.info = bot.getMe().result
-
-    logger:info("bot online. I am " .. bot.info.first_name .. ".")
+    local ret = bot.getMe()
+    if ret then
+        bot.info = ret.result
+        logger:info("bot online. I am " .. bot.info.first_name .. ".")
+    end
 
     local offset = 0
     local threads = {}
