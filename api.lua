@@ -18,11 +18,11 @@ function api.makeRequest(method, parameters)
     empty = true
 
     for k, v in pairs(parameters) do
-        parameters[k] = tostring(v)
+        if (type(v) == "integer" or type(v) == "number" or type(v) == "boolean") then
+            parameters[k] = tostring(v)
+        end
         empty = false
     end
-
-    logger:debug("call " .. method .. " with " .. utils.encode(parameters))
 
     local success, code, headers, status
 
@@ -68,6 +68,7 @@ function api.fetch()
     local apis = {}
 
     for method, content in html:gsub("<h4>", "<h4><h4>"):gmatch('<h4>[^\n]-</i></a>([a-z]%S-)</h4>(.-)<h4>') do
+        logger:debug(method)
         local t = {
             parameters = {},
             order = {}
@@ -78,6 +79,9 @@ function api.fetch()
                 local args = {...}
                 local body = {}
                 local named = (#args == 1 and type(args[1]) == "table")
+
+                logger:debug("call " .. method .. " with " .. utils.encode(args))
+
                 for i = 1, #t.order do
                     body[t.order[i]] = named and args[1][t.order[i]] or args[i]
                     if (t.parameters[t.order[i]].required and not body[t.order[i]]) then
@@ -85,6 +89,7 @@ function api.fetch()
                         return false
                     end
                 end
+                
                 return api.makeRequest(method, body)
             end,
 

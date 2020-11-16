@@ -7,6 +7,14 @@ function utils.curl(url)
     return r
 end
 
+function utils.wget(url)
+    os.execute('wget --timeout=0 --waitretry=0 --tries=1 -O wget.tmp "' .. url .. '"')
+    local f = io.open("wget.tmp", "r")
+    local ret = f:read("*a")
+    f:close()
+    return ret
+end
+
 function utils.htmlDecode(str)
     local entities = {
         ["&#34;"] = [["]],
@@ -55,6 +63,81 @@ function utils.encode(t, n)
     end
     ret = ret .. tabs .. "}"
     return ret
+end
+
+function utils.save(t, path)
+    assert(type(t) == "table")
+    local f = io.open(path, "w")
+    f:write("return " .. utils.encode(t))
+    f:close()    
+end
+
+function utils.sandbox(t)
+    local ret = {}
+    for _, name in pairs(t) do
+        if _G[name] then
+            if type(_G[name]) == "table" then
+                ret[name] = {}
+                for k, v in pairs(_G[name]) do
+                    if type(v) == "function" then
+                        ret[name][k] = function (...)
+                            return v(...)
+                        end
+                    else
+                        ret[name][k] = v
+                    end
+                end
+            elseif type(_G[name]) == "function" then
+                ret[name] = function (...)
+                    return _G[name](...)
+                end
+            else
+                ret[name] = _G[name]
+            end
+        end
+    end
+    return ret
+end
+
+function utils.rand(...)
+    local t = {...}
+    return t[math.random(#t)]
+end
+
+function utils.url_encode(str)
+    if (str) then
+        str = str:gsub("([^%w %-%_%.%~])", function (c) return string.format ("%%%02X", string.byte(c)) end):gsub(" ", "+")
+    end
+    return str
+end
+
+function utils.shuffle(t)
+    local nums = {}
+    local ret = {}
+    for k = 1, #t do
+        nums[k] = k
+    end
+    for k = 1, #t do
+        local rnd = math.random(#nums)
+        table.insert(ret, t[nums[rnd]])
+        table.remove(nums, rnd)
+    end
+    for k = 1, #t do
+        t[k] = ret[k]
+    end
+end
+
+function utils.readFile(fn)
+    local f = io.open(fn, "rb")
+    if not f then
+        return "(Not found)"
+    end
+    local data = {
+        filename = fn,
+        data = f:read("*a")
+    }
+    f:close()
+    return data
 end
 
 return utils

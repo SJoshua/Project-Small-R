@@ -79,7 +79,21 @@ end
 
 function bot.reload()
     package.loaded.soul = nil
+    package.loaded.bot = nil
+    package.loaded.api = nil
+    package.loaded.utils = nil
+    package.loaded.conversation = nil
     soul = require("soul")
+    bot = require("bot")
+    api = require("api")
+    return true
+end
+
+function bot.downloadFile(file_id, path)
+    local ret = bot.getFile(file_id)
+    if ret and ret.ok then
+        os.execute(string.format("wget --timeout=5 -O %s https://api.telegram.org/file/bot%s/%s", path or "tmp", config.token, ret.result.file_path))
+    end
 end
 
 function bot.getUpdates(offset, limit, timeout, allowed_updates)
@@ -123,8 +137,11 @@ function bot.run()
         end
         for uid, thread in pairs(threads) do
             local status, res = coroutine.resume(thread)
-            if not res then
+            if not status then
                 threads[uid] = nil
+                if (res ~= "cannot resume dead coroutine") then
+                    logger:error("coroutine #" .. uid .. " crashed, reason: " .. res)
+                end
             end
         end
     end

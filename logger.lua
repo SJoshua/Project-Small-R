@@ -1,13 +1,27 @@
 
 local logging = require("logging")
 
-local logger = logging.new(
+local tg_logger = logging.new(
     function(self, level, msg)
-        io.write(os.date(), " | ", level, " | ", msg:gsub("%s+", " "), "\n")
+        bot.sendMessage(config.monitor, ("*[%s]*\n```\n%s\n```"):format(level, msg), "Markdown")
         return true
     end
 )
 
-logger:setLevel(logging.INFO)
+tg_logger:setLevel(logging.WARN)
+
+local logger = logging.new(
+    function(self, level, msg)
+        print(("%s | %-7s | %s"):format(
+            os.date("%Y-%m-%d %H:%M:%S", os.time() + 8 * 3600),
+            level, 
+            msg:gsub("%s+", " ")
+        ))
+        tg_logger:log(level, msg)
+        return true
+    end
+)
+
+logger:setLevel(logging.DEBUG)
 
 return logger

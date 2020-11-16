@@ -5,14 +5,20 @@ local config = {
     -- Master's username
     master = "MASTER_USERNAME",
 
-    -- Master's userid
-    masterid = 000000000,
+    -- Monitor group / user id
+    monitor = 000000000,
 
     -- Timeout for getUpdates method
     timeout = 0,
 
     -- Limit for getUpdates metho- - d
     limit = 100, 
+
+    -- Max delay
+    ignore = 10,
+    
+    -- Enable dolua for guest
+    dolua = true,
 }
  
 return config
