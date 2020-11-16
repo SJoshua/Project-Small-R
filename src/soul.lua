@@ -74,7 +74,8 @@ soul.onMessageReceive = function(msg)
         end
 
         if match then
-            local ans, rep, rep_type = "Markdown"
+            local ans, rep
+            local rep_type = "Markdown"
             if type(reply) == "string" then
                 ans = reply
             elseif type(reply) == "table" then
