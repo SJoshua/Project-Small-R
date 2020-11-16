@@ -47,6 +47,8 @@ function api.makeRequest(method, parameters)
         }
     end
 
+    pcall(coroutine.yield)
+
     if success then
         local status, msg = pcall(cjson.decode, table.concat(response))
         if status then
