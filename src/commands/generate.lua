@@ -1,11 +1,11 @@
 local utils = require("utils")
 
 local generate = {
-    func = function (msg)
+    func = function(msg)
         local bangumi, mark, number = msg.text:match("/generate%s*(%S.-)([@#])([%d%.]+)")
         local notice = "searching..."
         local ret = bot.sendMessage(msg.chat.id, notice, nil, nil, nil, msg.message_id)
-        local query = utils.wget("http://anicobin.ldblog.jp/search?q=" .. url_encode(bangumi))
+        local query = utils.wget("http://anicobin.ldblog.jp/search?q=" .. utils.url_encode(bangumi))
         local reg = '<h2 class="top%-article%-title entry%-title"><a href="([^\n]-)"[^\n]-rel="bookmark">([^\n]-BGM_NUM)[^\n]-</a></h2>'
         if not query then
             return bot.editMessageText(msg.chat.id, ret.result.message_id, nil, notice .. "\nnetwork error.", "HTML")
@@ -44,7 +44,7 @@ local generate = {
             end
         end
         if mark == "#" then
-            current = "\t"
+            local current = "\t"
             for k = 1, #origin do
                 if #(current .. origin[k]) < 4096 then
                     current = current .. origin[k] .. "\n"
@@ -58,7 +58,7 @@ local generate = {
             local f = io.open("script.txt", "w")
             f:write(table.concat(origin, "\n"))
             f:close()
-            bot.sendDocument(msg.chat.id, readFile("script.txt"))
+            bot.sendDocument(msg.chat.id, utils.readFile("script.txt"))
         end
         bot.editMessageText(msg.chat.id, ret.result.message_id, nil, notice .. "\ndone.", "HTML")
     end,

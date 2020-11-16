@@ -15,7 +15,7 @@ local utils = require("utils")
 function api.makeRequest(method, parameters)
     local response = {}
 
-    empty = true
+    local empty = true
 
     for k, v in pairs(parameters) do
         if (type(v) == "integer" or type(v) == "number" or type(v) == "boolean") then

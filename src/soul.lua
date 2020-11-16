@@ -78,7 +78,7 @@ soul.onMessageReceive = function(msg)
             if type(reply) == "string" then
                 ans = reply
             elseif type(reply) == "table" then
-                ans = rand(unpack(reply))
+                ans = utils.rand(table.unpack(reply))
             elseif type(reply) == "function" then
                 ans = tostring(reply())
             end

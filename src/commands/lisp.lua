@@ -1,5 +1,5 @@
 local lisp = {
-    func = function(slient)
+    func = function(msg, slient)
         local code = msg.text:match("(%(.+%))")
         local f = io.open("code.lisp", "w")
         f:write(code)
