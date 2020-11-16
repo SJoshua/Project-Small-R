@@ -64,76 +64,76 @@ bot = {}
 -- successful_payment (SuccessfulPayment): Optional. Message is a service message about a successful payment, information about the payment.
 -------------------------------------------
 function analyzeMessageType(upd)
-	if upd.message then
-		local msg = upd.message
-		if msg.audio then
-			return "Audio"
-		elseif msg.video then
-			return "Video"
-		elseif msg.document then
-			return "Document"
-		elseif msg.game then
-			return "Game"
-		elseif msg.photo then
-			return "Photo"
-		elseif msg.sticker then
-			return "Sticker"
-		elseif msg.video_note then
-			return "VideoNote"
-		elseif msg.contact then
-			return "Contact"
-		elseif msg.location then
-			return "Location"
-		elseif msg.venue then
-			return "Venue"
-		elseif msg.new_chat_members then
-			return "NewChatMembers"
-		elseif msg.left_chat_member then
-			return "LeftChatMembers"
-		elseif msg.new_chat_title then
-			return "NewChatTitle"
-		elseif msg.new_chat_photo then
-			return "NewChatPhoto"
-		elseif msg.delete_chat_title then
-			return "DeleteChatPhoto"
-		elseif msg.group_chat_created then
-			return "GroupChatCreated"
-		elseif msg.supergroup_chat_created then
-			return "SupergroupChatCreated"
-		elseif msg.channel_chat_created then
-			return "ChannelChatCreated"
-		elseif msg.migrate_to_chat_id or msg.migrate_from_chat_id then
-			return "MigrateToChat"
-		elseif msg.pinned_message then
-			return "PinnedMessage"
-		elseif msg.invoice then
-			return "Invoice"
-		elseif msg.successful_payment then
-			return "SuccessfulPayment"
-		elseif msg.chat.type == "channel" then
-			return "ChannelMessage"
-		else
-			return "Message"
-		end
-	elseif upd.edited_message then
-		return "EditedMessage"
-	elseif upd.channel_post then
-		return "ChannelPost"
-	elseif upd.edited_channel_post then
-		return "EditedChannelPost"
-	elseif upd.inline_query then
-		return "InlineQuery"
-	elseif upd.chosen_inline_result then
-		return "ChosenInlineResult"
-	elseif upd.callback_query then
-		return "CallbackQuery"
-	elseif upd.shipping_query then
-		return "ShippingQuery"
-	elseif upd.pre_checkout_query then
-		return "PreCheckoutQuery"
-	else
-		return "Unknown"
-	end
+    if upd.message then
+        local msg = upd.message
+        if msg.audio then
+            return "Audio"
+        elseif msg.video then
+            return "Video"
+        elseif msg.document then
+            return "Document"
+        elseif msg.game then
+            return "Game"
+        elseif msg.photo then
+            return "Photo"
+        elseif msg.sticker then
+            return "Sticker"
+        elseif msg.video_note then
+            return "VideoNote"
+        elseif msg.contact then
+            return "Contact"
+        elseif msg.location then
+            return "Location"
+        elseif msg.venue then
+            return "Venue"
+        elseif msg.new_chat_members then
+            return "NewChatMembers"
+        elseif msg.left_chat_member then
+            return "LeftChatMembers"
+        elseif msg.new_chat_title then
+            return "NewChatTitle"
+        elseif msg.new_chat_photo then
+            return "NewChatPhoto"
+        elseif msg.delete_chat_title then
+            return "DeleteChatPhoto"
+        elseif msg.group_chat_created then
+            return "GroupChatCreated"
+        elseif msg.supergroup_chat_created then
+            return "SupergroupChatCreated"
+        elseif msg.channel_chat_created then
+            return "ChannelChatCreated"
+        elseif msg.migrate_to_chat_id or msg.migrate_from_chat_id then
+            return "MigrateToChat"
+        elseif msg.pinned_message then
+            return "PinnedMessage"
+        elseif msg.invoice then
+            return "Invoice"
+        elseif msg.successful_payment then
+            return "SuccessfulPayment"
+        elseif msg.chat.type == "channel" then
+            return "ChannelMessage"
+        else
+            return "Message"
+        end
+    elseif upd.edited_message then
+        return "EditedMessage"
+    elseif upd.channel_post then
+        return "ChannelPost"
+    elseif upd.edited_channel_post then
+        return "EditedChannelPost"
+    elseif upd.inline_query then
+        return "InlineQuery"
+    elseif upd.chosen_inline_result then
+        return "ChosenInlineResult"
+    elseif upd.callback_query then
+        return "CallbackQuery"
+    elseif upd.shipping_query then
+        return "ShippingQuery"
+    elseif upd.pre_checkout_query then
+        return "PreCheckoutQuery"
+    else
+        return "Unknown"
+    end
 end
 
 -------------------------------------------
@@ -147,58 +147,58 @@ end
 -- * multipart/form-data (use to upload files)
 -------------------------------------------
 function makeRequest(method, parameters)
-	local response = {}
+    local response = {}
 
-	empty = true
+    empty = true
 
-	for k, v in pairs(parameters) do
-		if type(v) == "number" or type(v) == "boolean" then
-			parameters[k] = tostring(v)
-		end
-		empty = false
-	end
+    for k, v in pairs(parameters) do
+        if type(v) == "number" or type(v) == "boolean" then
+            parameters[k] = tostring(v)
+        end
+        empty = false
+    end
 
-	print(os.date() .. "| [Request] " .. tostring(method))
+    print(os.date() .. "| [Request] " .. tostring(method))
 
-	local success, code, headers, status
+    local success, code, headers, status
 
-	if empty then
-		success, code, headers, status = https.request{
-			url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
-			method = "GET"
-		}
-	else 
-		local body, boundary = encode(parameters)
-		
-		success, code, headers, status = https.request{
-			url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
-			method = "POST",
-			headers = {
-				["Content-Type"] =  "multipart/form-data; boundary=" .. boundary,
-				["Content-Length"] = string.len(body),
-			},
-			source = ltn12.source.string(body),
-			sink = ltn12.sink.table(response),
-		}
-	end
+    if empty then
+        success, code, headers, status = https.request{
+            url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
+            method = "GET"
+        }
+    else 
+        local body, boundary = encode(parameters)
+        
+        success, code, headers, status = https.request{
+            url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
+            method = "POST",
+            headers = {
+                ["Content-Type"] =  "multipart/form-data; boundary=" .. boundary,
+                ["Content-Length"] = string.len(body),
+            },
+            source = ltn12.source.string(body),
+            sink = ltn12.sink.table(response),
+        }
+    end
 
-	print(os.date() .. "| [Response] " .. tostring(success))
+    print(os.date() .. "| [Response] " .. tostring(success))
 
-	if success then
-		local status, msg = pcall(cjson.decode, table.concat(response))
-		if status then
-			if not msg.ok then
-				if not (method == "createNewStickerSet" and msg.error_code == 400) then -- ignore sticker function
-					bot.sendMessage(config.masterid, "*Failed: API " .. method .. "*\n```\n" .. table.encode(msg) .. "\n```\n*Request:*\n```\n" .. table.encode(parameters) .. "\n```", "Markdown")
-				end
-			end
-			return msg
-		else
-			return nil, "failed to decode."
-		end
-	else
-		return nil, "failed to request."
-	end
+    if success then
+        local status, msg = pcall(cjson.decode, table.concat(response))
+        if status then
+            if not msg.ok then
+                if not (method == "createNewStickerSet" and msg.error_code == 400) then -- ignore sticker function
+                    bot.sendMessage(config.masterid, "*Failed: API " .. method .. "*\n```\n" .. table.encode(msg) .. "\n```\n*Request:*\n```\n" .. table.encode(parameters) .. "\n```", "Markdown")
+                end
+            end
+            return msg
+        else
+            return nil, "failed to decode."
+        end
+    else
+        return nil, "failed to request."
+    end
 end
 
 -------------------------------------------
@@ -207,10 +207,10 @@ end
 -- This object represents a file ready to be downloaded. The file can be downloaded via the link https://api.telegram.org/file/bot<token>/<file_path>. It is guaranteed that the link will be valid for at least 1 hour. When the link expires, a new one can be requested by calling getFile.
 -------------------------------------------
 function bot.downloadFile(file_id, path)
-	local ret = bot.getFile(file_id)
-	if ret and ret.ok then
-		os.execute(string.format("wget --timeout=5 -O %s https://api.telegram.org/file/bot%s/%s", path or "tmp", config.token, ret.result.file_path))
-	end
+    local ret = bot.getFile(file_id)
+    if ret and ret.ok then
+        os.execute(string.format("wget --timeout=5 -O %s https://api.telegram.org/file/bot%s/%s", path or "tmp", config.token, ret.result.file_path))
+    end
 end
 
 -------------------------------------------
@@ -218,19 +218,19 @@ end
 -- Start here.
 -------------------------------------------
 function bot.run()
-	local offset = 0
-	while true do
-		local updates = bot.getUpdates(offset, config.limit, config.timeout)
-		local f = io.open("timestamp", "w")
-		f:write(os.time())
-		f:close()
-		if updates and updates.result then
-			for key, upd in pairs(updates.result) do
-				soul[string.format("on%sReceive", analyzeMessageType(upd))](upd.message or upd.edited_message or upd.channel_post or upd.edited_channel_post or upd.inline_query or upd.chosen_inline_result or upd.callback_query or upd.shipping_query or upd.pre_checkout_query)
-				offset = upd.update_id + 1
-			end
-		end
-	end
+    local offset = 0
+    while true do
+        local updates = bot.getUpdates(offset, config.limit, config.timeout)
+        local f = io.open("timestamp", "w")
+        f:write(os.time())
+        f:close()
+        if updates and updates.result then
+            for key, upd in pairs(updates.result) do
+                soul[string.format("on%sReceive", analyzeMessageType(upd))](upd.message or upd.edited_message or upd.channel_post or upd.edited_channel_post or upd.inline_query or upd.chosen_inline_result or upd.callback_query or upd.shipping_query or upd.pre_checkout_query)
+                offset = upd.update_id + 1
+            end
+        end
+    end
 end
 
 -------------------------------------------
@@ -250,12 +250,12 @@ end
 -- allowed_updates (Array of String) [Optional]: List the types of updates you want your bot to receive. For example, specify [“message”, “edited_channel_post”, “callback_query”] to only receive updates of these types. See Update for a complete list of available update types. Specify an empty list to receive all updates regardless of type (default). If not specified, the previous setting will be used.
 -------------------------------------------
 function bot.getUpdates(offset, limit, timeout, allowed_updates)
-	local body = {}
-	body.offset = offset
-	body.limit = limit
-	body.timeout = timeout
-	body.allowed_updates = allowed_updates
-	return makeRequest("getUpdates", body)
+    local body = {}
+    body.offset = offset
+    body.limit = limit
+    body.timeout = timeout
+    body.allowed_updates = allowed_updates
+    return makeRequest("getUpdates", body)
 end
 
 -------------------------------------------
@@ -268,8 +268,8 @@ end
 -- none.
 -------------------------------------------
 function bot.getMe()
-	local body = {}
-	return makeRequest("getMe", body)
+    local body = {}
+    return makeRequest("getMe", body)
 end
 
 -------------------------------------------
@@ -286,21 +286,21 @@ end
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 -------------------------------------------
 function bot.sendMessage(chat_id, text, parse_mode, disable_web_page_preview, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not text then
-		return nil, "text is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.text = text
-	body.parse_mode = parse_mode
-	body.disable_web_page_preview = disable_web_page_preview
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendMessage", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not text then
+        return nil, "text is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.text = text
+    body.parse_mode = parse_mode
+    body.disable_web_page_preview = disable_web_page_preview
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendMessage", body)
 end
 
 -------------------------------------------
@@ -314,21 +314,21 @@ end
 -- message_id (Integer) [Yes]: Message identifier in the chat specified in from_chat_id
 -------------------------------------------
 function bot.forwardMessage(chat_id, from_chat_id, disable_notification, message_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not from_chat_id then
-		return nil, "from_chat_id is required."
-	end
-	if not message_id then
-		return nil, "message_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.from_chat_id = from_chat_id
-	body.disable_notification = disable_notification
-	body.message_id = message_id
-	return makeRequest("forwardMessage", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not from_chat_id then
+        return nil, "from_chat_id is required."
+    end
+    if not message_id then
+        return nil, "message_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.from_chat_id = from_chat_id
+    body.disable_notification = disable_notification
+    body.message_id = message_id
+    return makeRequest("forwardMessage", body)
 end
 
 -------------------------------------------
@@ -344,20 +344,20 @@ end
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 -------------------------------------------
 function bot.sendPhoto(chat_id, photo, caption, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not photo then
-		return nil, "photo is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.photo = photo
-	body.caption = caption
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendPhoto", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not photo then
+        return nil, "photo is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.photo = photo
+    body.caption = caption
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendPhoto", body)
 end
 
 -------------------------------------------
@@ -377,23 +377,23 @@ end
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 -------------------------------------------
 function bot.sendAudio(chat_id, audio, caption, duration, performer, title, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not audio then
-		return nil, "audio is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.audio = audio
-	body.caption = caption
-	body.duration = duration
-	body.performer = performer
-	body.title = title
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendAudio", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not audio then
+        return nil, "audio is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.audio = audio
+    body.caption = caption
+    body.duration = duration
+    body.performer = performer
+    body.title = title
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendAudio", body)
 end
 
 -------------------------------------------
@@ -409,20 +409,20 @@ end
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 -------------------------------------------
 function bot.sendDocument(chat_id, document, caption, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not document then
-		return nil, "document is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.document = document
-	body.caption = caption
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendDocument", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not document then
+        return nil, "document is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.document = document
+    body.caption = caption
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendDocument", body)
 end
 
 -------------------------------------------
@@ -441,23 +441,23 @@ end
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 -------------------------------------------
 function bot.sendVideo(chat_id, video, duration, width, height, caption, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not video then
-		return nil, "video is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.video = video
-	body.duration = duration
-	body.width = width
-	body.height = height
-	body.caption = caption
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendVideo", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not video then
+        return nil, "video is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.video = video
+    body.duration = duration
+    body.width = width
+    body.height = height
+    body.caption = caption
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendVideo", body)
 end
 
 -------------------------------------------
@@ -474,21 +474,21 @@ end
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 -------------------------------------------
 function bot.sendVoice(chat_id, voice, caption, duration, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not voice then
-		return nil, "voice is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.voice = voice
-	body.caption = caption
-	body.duration = duration
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendVoice", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not voice then
+        return nil, "voice is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.voice = voice
+    body.caption = caption
+    body.duration = duration
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendVoice", body)
 end
 
 -------------------------------------------
@@ -505,21 +505,21 @@ end
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 -------------------------------------------
 function bot.sendVideoNote(chat_id, video_note, duration, length, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not video_note then
-		return nil, "video_note is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.video_note = video_note
-	body.duration = duration
-	body.length = length
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendVideoNote", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not video_note then
+        return nil, "video_note is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.video_note = video_note
+    body.duration = duration
+    body.length = length
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendVideoNote", body)
 end
 
 -------------------------------------------
@@ -536,24 +536,24 @@ end
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 -------------------------------------------
 function bot.sendLocation(chat_id, latitude, longitude, live_period, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not latitude then
-		return nil, "latitude is required."
-	end
-	if not longitude then
-		return nil, "longitude is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.latitude = latitude
-	body.longitude = longitude
-	body.live_period = live_period
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendLocation", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not latitude then
+        return nil, "latitude is required."
+    end
+    if not longitude then
+        return nil, "longitude is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.latitude = latitude
+    body.longitude = longitude
+    body.live_period = live_period
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendLocation", body)
 end
 
 -------------------------------------------
@@ -569,20 +569,20 @@ end
 -- reply_markup (InlineKeyboardMarkup) [Optional]: A JSON-serialized object for a new inline keyboard.
 -------------------------------------------
 function bot.editMessageLiveLocation(chat_id, message_id, inline_message_id, latitude, longitude, reply_markup)
-	if not latitude then
-		return nil, "latitude is required."
-	end
-	if not longitude then
-		return nil, "longitude is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.message_id = message_id
-	body.inline_message_id = inline_message_id
-	body.latitude = latitude
-	body.longitude = longitude
-	body.reply_markup = reply_markup
-	return makeRequest("editMessageLiveLocation", body)
+    if not latitude then
+        return nil, "latitude is required."
+    end
+    if not longitude then
+        return nil, "longitude is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.message_id = message_id
+    body.inline_message_id = inline_message_id
+    body.latitude = latitude
+    body.longitude = longitude
+    body.reply_markup = reply_markup
+    return makeRequest("editMessageLiveLocation", body)
 end
 
 -------------------------------------------
@@ -596,12 +596,12 @@ end
 -- reply_markup (InlineKeyboardMarkup) [Optional]: A JSON-serialized object for a new inline keyboard.
 -------------------------------------------
 function bot.stopMessageLiveLocation(chat_id, message_id, inline_message_id, reply_markup)
-	local body = {}
-	body.chat_id = chat_id
-	body.message_id = message_id
-	body.inline_message_id = inline_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("stopMessageLiveLocation", body)
+    local body = {}
+    body.chat_id = chat_id
+    body.message_id = message_id
+    body.inline_message_id = inline_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("stopMessageLiveLocation", body)
 end
 
 -------------------------------------------
@@ -620,32 +620,32 @@ end
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 -------------------------------------------
 function bot.sendVenue(chat_id, latitude, longitude, title, address, foursquare_id, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not latitude then
-		return nil, "latitude is required."
-	end
-	if not longitude then
-		return nil, "longitude is required."
-	end
-	if not title then
-		return nil, "title is required."
-	end
-	if not address then
-		return nil, "address is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.latitude = latitude
-	body.longitude = longitude
-	body.title = title
-	body.address = address
-	body.foursquare_id = foursquare_id
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendVenue", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not latitude then
+        return nil, "latitude is required."
+    end
+    if not longitude then
+        return nil, "longitude is required."
+    end
+    if not title then
+        return nil, "title is required."
+    end
+    if not address then
+        return nil, "address is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.latitude = latitude
+    body.longitude = longitude
+    body.title = title
+    body.address = address
+    body.foursquare_id = foursquare_id
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendVenue", body)
 end
 
 -------------------------------------------
@@ -662,24 +662,24 @@ end
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove keyboard or to force a reply from the user.
 -------------------------------------------
 function bot.sendContact(chat_id, phone_number, first_name, last_name, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not phone_number then
-		return nil, "phone_number is required."
-	end
-	if not first_name then
-		return nil, "first_name is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.phone_number = phone_number
-	body.first_name = first_name
-	body.last_name = last_name
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendContact", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not phone_number then
+        return nil, "phone_number is required."
+    end
+    if not first_name then
+        return nil, "first_name is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.phone_number = phone_number
+    body.first_name = first_name
+    body.last_name = last_name
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendContact", body)
 end
 
 -------------------------------------------
@@ -693,16 +693,16 @@ end
 -- action (String) [Yes]: Type of action to broadcast. Choose one, depending on what the user is about to receive: typing for text messages, upload_photo for photos, record_video or upload_video for videos, record_audio or upload_audio for audio files, upload_document for general files, find_location for location data, record_video_note or upload_video_note for video notes.
 -------------------------------------------
 function bot.sendChatAction(chat_id, action)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not action then
-		return nil, "action is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.action = action
-	return makeRequest("sendChatAction", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not action then
+        return nil, "action is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.action = action
+    return makeRequest("sendChatAction", body)
 end
 
 -------------------------------------------
@@ -715,14 +715,14 @@ end
 -- limit (Integer) [Optional]: Limits the number of photos to be retrieved. Values between 1—100 are accepted. Defaults to 100.
 -------------------------------------------
 function bot.getUserProfilePhotos(user_id, offset, limit)
-	if not user_id then
-		return nil, "user_id is required."
-	end
-	local body = {}
-	body.user_id = user_id
-	body.offset = offset
-	body.limit = limit
-	return makeRequest("getUserProfilePhotos", body)
+    if not user_id then
+        return nil, "user_id is required."
+    end
+    local body = {}
+    body.user_id = user_id
+    body.offset = offset
+    body.limit = limit
+    return makeRequest("getUserProfilePhotos", body)
 end
 
 -------------------------------------------
@@ -733,12 +733,12 @@ end
 -- file_id (String) [Yes]: File identifier to get info about
 -------------------------------------------
 function bot.getFile(file_id)
-	if not file_id then
-		return nil, "file_id is required."
-	end
-	local body = {}
-	body.file_id = file_id
-	return makeRequest("getFile", body)
+    if not file_id then
+        return nil, "file_id is required."
+    end
+    local body = {}
+    body.file_id = file_id
+    return makeRequest("getFile", body)
 end
 
 -------------------------------------------
@@ -753,17 +753,17 @@ end
 -- until_date (Integer) [No]: Date when the user will be unbanned, unix time. If user is banned for more than 366 days or less than 30 seconds from the current time they are considered to be banned forever
 -------------------------------------------
 function bot.kickChatMember(chat_id, user_id, until_date)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not user_id then
-		return nil, "user_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.user_id = user_id
-	body.until_date = until_date
-	return makeRequest("kickChatMember", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not user_id then
+        return nil, "user_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.user_id = user_id
+    body.until_date = until_date
+    return makeRequest("kickChatMember", body)
 end
 
 -------------------------------------------
@@ -775,16 +775,16 @@ end
 -- user_id (Integer) [Yes]: Unique identifier of the target user
 -------------------------------------------
 function bot.unbanChatMember(chat_id, user_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not user_id then
-		return nil, "user_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.user_id = user_id
-	return makeRequest("unbanChatMember", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not user_id then
+        return nil, "user_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.user_id = user_id
+    return makeRequest("unbanChatMember", body)
 end
 
 -------------------------------------------
@@ -801,21 +801,21 @@ end
 -- can_add_web_page_previews (Boolean) [No]: Pass True, if the user may add web page previews to their messages, implies can_send_media_messages
 -------------------------------------------
 function bot.restrictChatMember(chat_id, user_id, until_date, can_send_messages, can_send_media_messages, can_send_other_messages, can_add_web_page_previews)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not user_id then
-		return nil, "user_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.user_id = user_id
-	body.until_date = until_date
-	body.can_send_messages = can_send_messages
-	body.can_send_media_messages = can_send_media_messages
-	body.can_send_other_messages = can_send_other_messages
-	body.can_add_web_page_previews = can_add_web_page_previews
-	return makeRequest("restrictChatMember", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not user_id then
+        return nil, "user_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.user_id = user_id
+    body.until_date = until_date
+    body.can_send_messages = can_send_messages
+    body.can_send_media_messages = can_send_media_messages
+    body.can_send_other_messages = can_send_other_messages
+    body.can_add_web_page_previews = can_add_web_page_previews
+    return makeRequest("restrictChatMember", body)
 end
 
 -------------------------------------------
@@ -835,24 +835,24 @@ end
 -- can_promote_members (Boolean) [No]: Pass True, if the administrator can add new administrators with a subset of his own privileges or demote administrators that he has promoted, directly or indirectly (promoted by administrators that were appointed by him)
 -------------------------------------------
 function bot.promoteChatMember(chat_id, user_id, can_change_info, can_post_messages, can_edit_messages, can_delete_messages, can_invite_users, can_restrict_members, can_pin_messages, can_promote_members)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not user_id then
-		return nil, "user_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.user_id = user_id
-	body.can_change_info = can_change_info
-	body.can_post_messages = can_post_messages
-	body.can_edit_messages = can_edit_messages
-	body.can_delete_messages = can_delete_messages
-	body.can_invite_users = can_invite_users
-	body.can_restrict_members = can_restrict_members
-	body.can_pin_messages = can_pin_messages
-	body.can_promote_members = can_promote_members
-	return makeRequest("promoteChatMember", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not user_id then
+        return nil, "user_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.user_id = user_id
+    body.can_change_info = can_change_info
+    body.can_post_messages = can_post_messages
+    body.can_edit_messages = can_edit_messages
+    body.can_delete_messages = can_delete_messages
+    body.can_invite_users = can_invite_users
+    body.can_restrict_members = can_restrict_members
+    body.can_pin_messages = can_pin_messages
+    body.can_promote_members = can_promote_members
+    return makeRequest("promoteChatMember", body)
 end
 
 -------------------------------------------
@@ -863,12 +863,12 @@ end
 -- chat_id (Integer or String) [Yes]: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 -------------------------------------------
 function bot.exportChatInviteLink(chat_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	return makeRequest("exportChatInviteLink", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    return makeRequest("exportChatInviteLink", body)
 end
 
 -------------------------------------------
@@ -882,16 +882,16 @@ end
 -- photo (InputFile) [Yes]: New chat photo, uploaded using multipart/form-data
 -------------------------------------------
 function bot.setChatPhoto(chat_id, photo)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not photo then
-		return nil, "photo is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.photo = photo
-	return makeRequest("setChatPhoto", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not photo then
+        return nil, "photo is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.photo = photo
+    return makeRequest("setChatPhoto", body)
 end
 
 -------------------------------------------
@@ -904,12 +904,12 @@ end
 -- chat_id (Integer or String) [Yes]: Unique identifier for the target chat or username of the target channel (in the format @channelusername)
 -------------------------------------------
 function bot.deleteChatPhoto(chat_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	return makeRequest("deleteChatPhoto", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    return makeRequest("deleteChatPhoto", body)
 end
 
 -------------------------------------------
@@ -923,16 +923,16 @@ end
 -- title (String) [Yes]: New chat title, 1-255 characters
 -------------------------------------------
 function bot.setChatTitle(chat_id, title)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not title then
-		return nil, "title is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.title = title
-	return makeRequest("setChatTitle", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not title then
+        return nil, "title is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.title = title
+    return makeRequest("setChatTitle", body)
 end
 
 -------------------------------------------
@@ -944,13 +944,13 @@ end
 -- description (String) [No]: New chat description, 0-255 characters
 -------------------------------------------
 function bot.setChatDescription(chat_id, description)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.description = description
-	return makeRequest("setChatDescription", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.description = description
+    return makeRequest("setChatDescription", body)
 end
 
 -------------------------------------------
@@ -963,17 +963,17 @@ end
 -- disable_notification (Boolean) [No]: Pass True, if it is not necessary to send a notification to all group members about the new pinned message
 -------------------------------------------
 function bot.pinChatMessage(chat_id, message_id, disable_notification)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not message_id then
-		return nil, "message_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.message_id = message_id
-	body.disable_notification = disable_notification
-	return makeRequest("pinChatMessage", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not message_id then
+        return nil, "message_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.message_id = message_id
+    body.disable_notification = disable_notification
+    return makeRequest("pinChatMessage", body)
 end
 
 -------------------------------------------
@@ -984,12 +984,12 @@ end
 -- chat_id (Integer or String) [Yes]: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
 -------------------------------------------
 function bot.unpinChatMessage(chat_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	return makeRequest("unpinChatMessage", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    return makeRequest("unpinChatMessage", body)
 end
 
 -------------------------------------------
@@ -1000,12 +1000,12 @@ end
 -- chat_id (Integer or String) [Yes]: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 -------------------------------------------
 function bot.leaveChat(chat_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	return makeRequest("leaveChat", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    return makeRequest("leaveChat", body)
 end
 
 -------------------------------------------
@@ -1016,12 +1016,12 @@ end
 -- chat_id (Integer or String) [Yes]: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 -------------------------------------------
 function bot.getChat(chat_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	return makeRequest("getChat", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    return makeRequest("getChat", body)
 end
 
 -------------------------------------------
@@ -1032,12 +1032,12 @@ end
 -- chat_id (Integer or String) [Yes]: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 -------------------------------------------
 function bot.getChatAdministrators(chat_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	return makeRequest("getChatAdministrators", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    return makeRequest("getChatAdministrators", body)
 end
 
 -------------------------------------------
@@ -1048,12 +1048,12 @@ end
 -- chat_id (Integer or String) [Yes]: Unique identifier for the target chat or username of the target supergroup or channel (in the format @channelusername)
 -------------------------------------------
 function bot.getChatMembersCount(chat_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	return makeRequest("getChatMembersCount", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    return makeRequest("getChatMembersCount", body)
 end
 
 -------------------------------------------
@@ -1065,16 +1065,16 @@ end
 -- user_id (Integer) [Yes]: Unique identifier of the target user
 -------------------------------------------
 function bot.getChatMember(chat_id, user_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not user_id then
-		return nil, "user_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.user_id = user_id
-	return makeRequest("getChatMember", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not user_id then
+        return nil, "user_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.user_id = user_id
+    return makeRequest("getChatMember", body)
 end
 
 -------------------------------------------
@@ -1086,16 +1086,16 @@ end
 -- sticker_set_name (String) [Yes]: Name of the sticker set to be set as the group sticker set
 -------------------------------------------
 function bot.setChatStickerSet(chat_id, sticker_set_name)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not sticker_set_name then
-		return nil, "sticker_set_name is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.sticker_set_name = sticker_set_name
-	return makeRequest("setChatStickerSet", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not sticker_set_name then
+        return nil, "sticker_set_name is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.sticker_set_name = sticker_set_name
+    return makeRequest("setChatStickerSet", body)
 end
 
 -------------------------------------------
@@ -1106,12 +1106,12 @@ end
 -- chat_id (Integer or String) [Yes]: Unique identifier for the target chat or username of the target supergroup (in the format @supergroupusername)
 -------------------------------------------
 function bot.deleteChatStickerSet(chat_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	return makeRequest("deleteChatStickerSet", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    return makeRequest("deleteChatStickerSet", body)
 end
 
 -------------------------------------------
@@ -1128,16 +1128,16 @@ end
 -- cache_time (Integer) [Optional]: The maximum amount of time in seconds that the result of the callback query may be cached client-side. Telegram apps will support caching starting in version 3.14. Defaults to 0.
 -------------------------------------------
 function bot.answerCallbackQuery(callback_query_id, text, show_alert, url, cache_time)
-	if not callback_query_id then
-		return nil, "callback_query_id is required."
-	end
-	local body = {}
-	body.callback_query_id = callback_query_id
-	body.text = text
-	body.show_alert = show_alert
-	body.url = url
-	body.cache_time = cache_time
-	return makeRequest("answerCallbackQuery", body)
+    if not callback_query_id then
+        return nil, "callback_query_id is required."
+    end
+    local body = {}
+    body.callback_query_id = callback_query_id
+    body.text = text
+    body.show_alert = show_alert
+    body.url = url
+    body.cache_time = cache_time
+    return makeRequest("answerCallbackQuery", body)
 end
 
 -------------------------------------------
@@ -1154,18 +1154,18 @@ end
 -- reply_markup (InlineKeyboardMarkup) [Optional]: A JSON-serialized object for an inline keyboard.
 -------------------------------------------
 function bot.editMessageText(chat_id, message_id, inline_message_id, text, parse_mode, disable_web_page_preview, reply_markup)
-	if not text then
-		return nil, "text is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.message_id = message_id
-	body.inline_message_id = inline_message_id
-	body.text = text
-	body.parse_mode = parse_mode
-	body.disable_web_page_preview = disable_web_page_preview
-	body.reply_markup = reply_markup
-	return makeRequest("editMessageText", body)
+    if not text then
+        return nil, "text is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.message_id = message_id
+    body.inline_message_id = inline_message_id
+    body.text = text
+    body.parse_mode = parse_mode
+    body.disable_web_page_preview = disable_web_page_preview
+    body.reply_markup = reply_markup
+    return makeRequest("editMessageText", body)
 end
 
 -------------------------------------------
@@ -1180,13 +1180,13 @@ end
 -- reply_markup (InlineKeyboardMarkup) [Optional]: A JSON-serialized object for an inline keyboard.
 -------------------------------------------
 function bot.editMessageCaption(chat_id, message_id, inline_message_id, caption, reply_markup)
-	local body = {}
-	body.chat_id = chat_id
-	body.message_id = message_id
-	body.inline_message_id = inline_message_id
-	body.caption = caption
-	body.reply_markup = reply_markup
-	return makeRequest("editMessageCaption", body)
+    local body = {}
+    body.chat_id = chat_id
+    body.message_id = message_id
+    body.inline_message_id = inline_message_id
+    body.caption = caption
+    body.reply_markup = reply_markup
+    return makeRequest("editMessageCaption", body)
 end
 
 -------------------------------------------
@@ -1200,12 +1200,12 @@ end
 -- reply_markup (InlineKeyboardMarkup) [Optional]: A JSON-serialized object for an inline keyboard.
 -------------------------------------------
 function bot.editMessageReplyMarkup(chat_id, message_id, inline_message_id, reply_markup)
-	local body = {}
-	body.chat_id = chat_id
-	body.message_id = message_id
-	body.inline_message_id = inline_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("editMessageReplyMarkup", body)
+    local body = {}
+    body.chat_id = chat_id
+    body.message_id = message_id
+    body.inline_message_id = inline_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("editMessageReplyMarkup", body)
 end
 
 -------------------------------------------
@@ -1217,16 +1217,16 @@ end
 -- message_id (Integer) [Yes]: Identifier of the message to delete
 -------------------------------------------
 function bot.deleteMessage(chat_id, message_id)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not message_id then
-		return nil, "message_id is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.message_id = message_id
-	return makeRequest("deleteMessage", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not message_id then
+        return nil, "message_id is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.message_id = message_id
+    return makeRequest("deleteMessage", body)
 end
 
 -------------------------------------------
@@ -1241,19 +1241,19 @@ end
 -- reply_markup (InlineKeyboardMarkup or ReplyKeyboardMarkup or ReplyKeyboardRemove or ForceReply) [Optional]: Additional interface options. A JSON-serialized object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 -------------------------------------------
 function bot.sendSticker(chat_id, sticker, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not sticker then
-		return nil, "sticker is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.sticker = sticker
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendSticker", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not sticker then
+        return nil, "sticker is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.sticker = sticker
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendSticker", body)
 end
 
 -------------------------------------------
@@ -1264,12 +1264,12 @@ end
 -- name (String) [Yes]: Name of the sticker set
 -------------------------------------------
 function bot.getStickerSet(name)
-	if not name then
-		return nil, "name is required."
-	end
-	local body = {}
-	body.name = name
-	return makeRequest("getStickerSet", body)
+    if not name then
+        return nil, "name is required."
+    end
+    local body = {}
+    body.name = name
+    return makeRequest("getStickerSet", body)
 end
 
 -------------------------------------------
@@ -1281,16 +1281,16 @@ end
 -- png_sticker (InputFile) [Yes]: Png image with the sticker, must be up to 512 kilobytes in size, dimensions must not exceed 512px, and either width or height must be exactly 512px. More info on Sending Files »
 -------------------------------------------
 function bot.uploadStickerFile(user_id, png_sticker)
-	if not user_id then
-		return nil, "user_id is required."
-	end
-	if not png_sticker then
-		return nil, "png_sticker is required."
-	end
-	local body = {}
-	body.user_id = user_id
-	body.png_sticker = png_sticker
-	return makeRequest("uploadStickerFile", body)
+    if not user_id then
+        return nil, "user_id is required."
+    end
+    if not png_sticker then
+        return nil, "png_sticker is required."
+    end
+    local body = {}
+    body.user_id = user_id
+    body.png_sticker = png_sticker
+    return makeRequest("uploadStickerFile", body)
 end
 
 -------------------------------------------
@@ -1307,30 +1307,30 @@ end
 -- mask_position (MaskPosition) [Optional]: A JSON-serialized object for position where the mask should be placed on faces
 -------------------------------------------
 function bot.createNewStickerSet(user_id, name, title, png_sticker, emojis, contains_masks, mask_position)
-	if not user_id then
-		return nil, "user_id is required."
-	end
-	if not name then
-		return nil, "name is required."
-	end
-	if not title then
-		return nil, "title is required."
-	end
-	if not png_sticker then
-		return nil, "png_sticker is required."
-	end
-	if not emojis then
-		return nil, "emojis is required."
-	end
-	local body = {}
-	body.user_id = user_id
-	body.name = name
-	body.title = title
-	body.png_sticker = png_sticker
-	body.emojis = emojis
-	body.contains_masks = contains_masks
-	body.mask_position = mask_position
-	return makeRequest("createNewStickerSet", body)
+    if not user_id then
+        return nil, "user_id is required."
+    end
+    if not name then
+        return nil, "name is required."
+    end
+    if not title then
+        return nil, "title is required."
+    end
+    if not png_sticker then
+        return nil, "png_sticker is required."
+    end
+    if not emojis then
+        return nil, "emojis is required."
+    end
+    local body = {}
+    body.user_id = user_id
+    body.name = name
+    body.title = title
+    body.png_sticker = png_sticker
+    body.emojis = emojis
+    body.contains_masks = contains_masks
+    body.mask_position = mask_position
+    return makeRequest("createNewStickerSet", body)
 end
 
 -------------------------------------------
@@ -1345,25 +1345,25 @@ end
 -- mask_position (MaskPosition) [Optional]: A JSON-serialized object for position where the mask should be placed on faces
 -------------------------------------------
 function bot.addStickerToSet(user_id, name, png_sticker, emojis, mask_position)
-	if not user_id then
-		return nil, "user_id is required."
-	end
-	if not name then
-		return nil, "name is required."
-	end
-	if not png_sticker then
-		return nil, "png_sticker is required."
-	end
-	if not emojis then
-		return nil, "emojis is required."
-	end
-	local body = {}
-	body.user_id = user_id
-	body.name = name
-	body.png_sticker = png_sticker
-	body.emojis = emojis
-	body.mask_position = mask_position
-	return makeRequest("addStickerToSet", body)
+    if not user_id then
+        return nil, "user_id is required."
+    end
+    if not name then
+        return nil, "name is required."
+    end
+    if not png_sticker then
+        return nil, "png_sticker is required."
+    end
+    if not emojis then
+        return nil, "emojis is required."
+    end
+    local body = {}
+    body.user_id = user_id
+    body.name = name
+    body.png_sticker = png_sticker
+    body.emojis = emojis
+    body.mask_position = mask_position
+    return makeRequest("addStickerToSet", body)
 end
 
 -------------------------------------------
@@ -1375,16 +1375,16 @@ end
 -- position (Integer) [Yes]: New sticker position in the set, zero-based
 -------------------------------------------
 function bot.setStickerPositionInSet(sticker, position)
-	if not sticker then
-		return nil, "sticker is required."
-	end
-	if not position then
-		return nil, "position is required."
-	end
-	local body = {}
-	body.sticker = sticker
-	body.position = position
-	return makeRequest("setStickerPositionInSet", body)
+    if not sticker then
+        return nil, "sticker is required."
+    end
+    if not position then
+        return nil, "position is required."
+    end
+    local body = {}
+    body.sticker = sticker
+    body.position = position
+    return makeRequest("setStickerPositionInSet", body)
 end
 
 -------------------------------------------
@@ -1395,12 +1395,12 @@ end
 -- sticker (String) [Yes]: File identifier of the sticker
 -------------------------------------------
 function bot.deleteStickerFromSet(sticker)
-	if not sticker then
-		return nil, "sticker is required."
-	end
-	local body = {}
-	body.sticker = sticker
-	return makeRequest("deleteStickerFromSet", body)
+    if not sticker then
+        return nil, "sticker is required."
+    end
+    local body = {}
+    body.sticker = sticker
+    return makeRequest("deleteStickerFromSet", body)
 end
 
 -------------------------------------------
@@ -1417,21 +1417,21 @@ end
 -- switch_pm_parameter (String) [Optional]: Deep-linking parameter for the /start message sent to the bot when user presses the switch button. 1-64 characters, only A-Z, a-z, 0-9, _ and - are allowed.Example: An inline bot that sends YouTube videos can ask the user to connect the bot to their YouTube account to adapt search results accordingly. To do this, it displays a ‘Connect your YouTube account’ button above the results, or even before showing any. The user presses the button, switches to a private chat with the bot and, in doing so, passes a start parameter that instructs the bot to return an oauth link. Once done, the bot can offer a switch_inline button so that the user can easily return to the chat where they wanted to use the bot's inline capabilities.
 -------------------------------------------
 function bot.answerInlineQuery(inline_query_id, results, cache_time, is_personal, next_offset, switch_pm_text, switch_pm_parameter)
-	if not inline_query_id then
-		return nil, "inline_query_id is required."
-	end
-	if not results then
-		return nil, "results is required."
-	end
-	local body = {}
-	body.inline_query_id = inline_query_id
-	body.results = results
-	body.cache_time = cache_time
-	body.is_personal = is_personal
-	body.next_offset = next_offset
-	body.switch_pm_text = switch_pm_text
-	body.switch_pm_parameter = switch_pm_parameter
-	return makeRequest("answerInlineQuery", body)
+    if not inline_query_id then
+        return nil, "inline_query_id is required."
+    end
+    if not results then
+        return nil, "results is required."
+    end
+    local body = {}
+    body.inline_query_id = inline_query_id
+    body.results = results
+    body.cache_time = cache_time
+    body.is_personal = is_personal
+    body.next_offset = next_offset
+    body.switch_pm_text = switch_pm_text
+    body.switch_pm_parameter = switch_pm_parameter
+    return makeRequest("answerInlineQuery", body)
 end
 
 -------------------------------------------
@@ -1461,52 +1461,52 @@ end
 -- reply_markup (InlineKeyboardMarkup) [Optional]: A JSON-serialized object for an inline keyboard. If empty, one 'Pay total price' button will be shown. If not empty, the first button must be a Pay button.
 -------------------------------------------
 function bot.sendInvoice(chat_id, title, description, payload, provider_token, start_parameter, currency, prices, photo_url, photo_size, photo_width, photo_height, need_name, need_phone_number, need_email, need_shipping_address, is_flexible, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not title then
-		return nil, "title is required."
-	end
-	if not description then
-		return nil, "description is required."
-	end
-	if not payload then
-		return nil, "payload is required."
-	end
-	if not provider_token then
-		return nil, "provider_token is required."
-	end
-	if not start_parameter then
-		return nil, "start_parameter is required."
-	end
-	if not currency then
-		return nil, "currency is required."
-	end
-	if not prices then
-		return nil, "prices is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.title = title
-	body.description = description
-	body.payload = payload
-	body.provider_token = provider_token
-	body.start_parameter = start_parameter
-	body.currency = currency
-	body.prices = prices
-	body.photo_url = photo_url
-	body.photo_size = photo_size
-	body.photo_width = photo_width
-	body.photo_height = photo_height
-	body.need_name = need_name
-	body.need_phone_number = need_phone_number
-	body.need_email = need_email
-	body.need_shipping_address = need_shipping_address
-	body.is_flexible = is_flexible
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendInvoice", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not title then
+        return nil, "title is required."
+    end
+    if not description then
+        return nil, "description is required."
+    end
+    if not payload then
+        return nil, "payload is required."
+    end
+    if not provider_token then
+        return nil, "provider_token is required."
+    end
+    if not start_parameter then
+        return nil, "start_parameter is required."
+    end
+    if not currency then
+        return nil, "currency is required."
+    end
+    if not prices then
+        return nil, "prices is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.title = title
+    body.description = description
+    body.payload = payload
+    body.provider_token = provider_token
+    body.start_parameter = start_parameter
+    body.currency = currency
+    body.prices = prices
+    body.photo_url = photo_url
+    body.photo_size = photo_size
+    body.photo_width = photo_width
+    body.photo_height = photo_height
+    body.need_name = need_name
+    body.need_phone_number = need_phone_number
+    body.need_email = need_email
+    body.need_shipping_address = need_shipping_address
+    body.is_flexible = is_flexible
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendInvoice", body)
 end
 
 -------------------------------------------
@@ -1520,18 +1520,18 @@ end
 -- error_message (String) [Optional]: Required if ok is False. Error message in human readable form that explains why it is impossible to complete the order (e.g. "Sorry, delivery to your desired address is unavailable'). Telegram will display this message to the user.
 -------------------------------------------
 function bot.answerShippingQuery(shipping_query_id, ok, shipping_options, error_message)
-	if not shipping_query_id then
-		return nil, "shipping_query_id is required."
-	end
-	if not ok then
-		return nil, "ok is required."
-	end
-	local body = {}
-	body.shipping_query_id = shipping_query_id
-	body.ok = ok
-	body.shipping_options = shipping_options
-	body.error_message = error_message
-	return makeRequest("answerShippingQuery", body)
+    if not shipping_query_id then
+        return nil, "shipping_query_id is required."
+    end
+    if not ok then
+        return nil, "ok is required."
+    end
+    local body = {}
+    body.shipping_query_id = shipping_query_id
+    body.ok = ok
+    body.shipping_options = shipping_options
+    body.error_message = error_message
+    return makeRequest("answerShippingQuery", body)
 end
 
 -------------------------------------------
@@ -1544,17 +1544,17 @@ end
 -- error_message (String) [Optional]: Required if ok is False. Error message in human readable form that explains the reason for failure to proceed with the checkout (e.g. "Sorry, somebody just bought the last of our amazing black T-shirts while you were busy filling out your payment details. Please choose a different color or garment!"). Telegram will display this message to the user.
 -------------------------------------------
 function bot.answerPreCheckoutQuery(pre_checkout_query_id, ok, error_message)
-	if not pre_checkout_query_id then
-		return nil, "pre_checkout_query_id is required."
-	end
-	if not ok then
-		return nil, "ok is required."
-	end
-	local body = {}
-	body.pre_checkout_query_id = pre_checkout_query_id
-	body.ok = ok
-	body.error_message = error_message
-	return makeRequest("answerPreCheckoutQuery", body)
+    if not pre_checkout_query_id then
+        return nil, "pre_checkout_query_id is required."
+    end
+    if not ok then
+        return nil, "ok is required."
+    end
+    local body = {}
+    body.pre_checkout_query_id = pre_checkout_query_id
+    body.ok = ok
+    body.error_message = error_message
+    return makeRequest("answerPreCheckoutQuery", body)
 end
 
 -------------------------------------------
@@ -1569,19 +1569,19 @@ end
 -- reply_markup (InlineKeyboardMarkup) [Optional]: A JSON-serialized object for an inline keyboard. If empty, one ‘Play game_title’ button will be shown. If not empty, the first button must launch the game.
 -------------------------------------------
 function bot.sendGame(chat_id, game_short_name, disable_notification, reply_to_message_id, reply_markup)
-	if not chat_id then
-		return nil, "chat_id is required."
-	end
-	if not game_short_name then
-		return nil, "game_short_name is required."
-	end
-	local body = {}
-	body.chat_id = chat_id
-	body.game_short_name = game_short_name
-	body.disable_notification = disable_notification
-	body.reply_to_message_id = reply_to_message_id
-	body.reply_markup = reply_markup
-	return makeRequest("sendGame", body)
+    if not chat_id then
+        return nil, "chat_id is required."
+    end
+    if not game_short_name then
+        return nil, "game_short_name is required."
+    end
+    local body = {}
+    body.chat_id = chat_id
+    body.game_short_name = game_short_name
+    body.disable_notification = disable_notification
+    body.reply_to_message_id = reply_to_message_id
+    body.reply_markup = reply_markup
+    return makeRequest("sendGame", body)
 end
 
 -------------------------------------------
@@ -1598,21 +1598,21 @@ end
 -- inline_message_id (String) [Optional]: Required if chat_id and message_id are not specified. Identifier of the inline message
 -------------------------------------------
 function bot.setGameScore(user_id, score, force, disable_edit_message, chat_id, message_id, inline_message_id)
-	if not user_id then
-		return nil, "user_id is required."
-	end
-	if not score then
-		return nil, "score is required."
-	end
-	local body = {}
-	body.user_id = user_id
-	body.score = score
-	body.force = force
-	body.disable_edit_message = disable_edit_message
-	body.chat_id = chat_id
-	body.message_id = message_id
-	body.inline_message_id = inline_message_id
-	return makeRequest("setGameScore", body)
+    if not user_id then
+        return nil, "user_id is required."
+    end
+    if not score then
+        return nil, "score is required."
+    end
+    local body = {}
+    body.user_id = user_id
+    body.score = score
+    body.force = force
+    body.disable_edit_message = disable_edit_message
+    body.chat_id = chat_id
+    body.message_id = message_id
+    body.inline_message_id = inline_message_id
+    return makeRequest("setGameScore", body)
 end
 
 -------------------------------------------
@@ -1628,14 +1628,14 @@ end
 -- inline_message_id (String) [Optional]: Required if chat_id and message_id are not specified. Identifier of the inline message
 -------------------------------------------
 function bot.getGameHighScores(user_id, chat_id, message_id, inline_message_id)
-	if not user_id then
-		return nil, "user_id is required."
-	end
-	local body = {}
-	body.user_id = user_id
-	body.chat_id = chat_id
-	body.message_id = message_id
-	body.inline_message_id = inline_message_id
-	return makeRequest("getGameHighScores", body)
+    if not user_id then
+        return nil, "user_id is required."
+    end
+    local body = {}
+    body.user_id = user_id
+    body.chat_id = chat_id
+    body.message_id = message_id
+    body.inline_message_id = inline_message_id
+    return makeRequest("getGameHighScores", body)
 end
 

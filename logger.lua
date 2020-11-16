@@ -2,8 +2,8 @@
 local logging = require("logging")
 
 local logger = logging.new(
-    function(self, level, message)
-        io.write(os.date(), " | ", level, " | ", message:gsub("%s+", " "), "\n")
+    function(self, level, msg)
+        io.write(os.date(), " | ", level, " | ", msg:gsub("%s+", " "), "\n")
         return true
     end
 )

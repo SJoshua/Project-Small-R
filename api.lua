@@ -13,53 +13,53 @@ local utils = require("utils")
 ---@param method string
 ---@param parameters table 
 function api.makeRequest(method, parameters)
-	local response = {}
+    local response = {}
 
-	empty = true
+    empty = true
 
-	for k, v in pairs(parameters) do
-		if type(v) == "number" or type(v) == "boolean" then
-			parameters[k] = tostring(v)
-		end
-		empty = false
-	end
+    for k, v in pairs(parameters) do
+        if type(v) == "number" or type(v) == "boolean" then
+            parameters[k] = tostring(v)
+        end
+        empty = false
+    end
 
-    logger:info("call " .. method .. " with " .. utils.encode(parameters))
+    logger:debug("call " .. method .. " with " .. utils.encode(parameters))
 
-	local success, code, headers, status
+    local success, code, headers, status
 
-	if empty then
-		success, code, headers, status = https.request{
-			url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
-			method = "GET",
-			sink = ltn12.sink.table(response),
+    if empty then
+        success, code, headers, status = https.request{
+            url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
+            method = "GET",
+            sink = ltn12.sink.table(response),
         }
-	else 
-		local body, boundary = encode(parameters)
-		
-		success, code, headers, status = https.request{
-			url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
-			method = "POST",
-			headers = {
-				["Content-Type"] =  "multipart/form-data; boundary=" .. boundary,
-				["Content-Length"] = string.len(body),
-			},
-			source = ltn12.source.string(body),
-			sink = ltn12.sink.table(response),
-		}
-	end
+    else 
+        local body, boundary = encode(parameters)
+        
+        success, code, headers, status = https.request{
+            url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
+            method = "POST",
+            headers = {
+                ["Content-Type"] =  "multipart/form-data; boundary=" .. boundary,
+                ["Content-Length"] = string.len(body),
+            },
+            source = ltn12.source.string(body),
+            sink = ltn12.sink.table(response),
+        }
+    end
 
-	if success then
-		local status, msg = pcall(cjson.decode, table.concat(response))
-		if status then
-            logger:info("response " .. utils.encode(msg))
-			return msg
+    if success then
+        local status, msg = pcall(cjson.decode, table.concat(response))
+        if status then
+            logger:debug("response " .. utils.encode(msg))
+            return msg
         else
             logger:error("failed to decode: " .. msg)
-		end
-	else
-		logger:error("failed to request: " .. code)
-	end
+        end
+    else
+        logger:error("failed to request: " .. code)
+    end
 end
 
 function api.fetch()
