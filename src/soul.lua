@@ -70,7 +70,7 @@ soul.onMessageReceive = function(msg)
                 match = false
             end
         elseif type(keyword) == "function" then
-            match = keyword()
+            match = keyword(msg.text)
         end
 
         if match then
