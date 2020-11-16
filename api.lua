@@ -31,9 +31,9 @@ function api.makeRequest(method, parameters)
 	if empty then
 		success, code, headers, status = https.request{
 			url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
-			method = "GET"
+			method = "GET",
+			sink = ltn12.sink.table(response),
         }
-        print(success, code, headers, status)
 	else 
 		local body, boundary = encode(parameters)
 		
