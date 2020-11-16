@@ -90,6 +90,7 @@ function bot.reload()
 end
 
 function bot.downloadFile(file_id, path)
+    logger:warn(tostring(bot.getFile))
     local ret = bot.getFile(file_id)
     if ret and ret.ok then
         os.execute(string.format("wget --timeout=5 -O %s https://api.telegram.org/file/bot%s/%s", path or "tmp", config.token, ret.result.file_path))
@@ -150,7 +151,6 @@ end
 setmetatable(bot, {
     __index = function(t, key)
         logger:warn("called undefined method " .. key)
-        return (function() return false end)
     end
 })
 
