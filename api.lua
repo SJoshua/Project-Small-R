@@ -18,9 +18,7 @@ function api.makeRequest(method, parameters)
     empty = true
 
     for k, v in pairs(parameters) do
-        if type(v) == "number" or type(v) == "boolean" then
-            parameters[k] = tostring(v)
-        end
+        parameters[k] = tostring(v)
         empty = false
     end
 
@@ -64,7 +62,8 @@ end
 
 function api.fetch()
     logger:info("fetching latest API ...")
-    local html = utils.curl("https://core.telegram.org/bots/api"):match("Available methods(.+)$") 
+    local html = utils.curl("https://core.telegram.org/bots/api")
+    html = html:match("Available methods(.+)$") 
     html = utils.htmlDecode(html)
     local apis = {}
 
@@ -75,7 +74,7 @@ function api.fetch()
         }
         
         setmetatable(t, {
-            __call = function(...) 
+            __call = function(t, ...) 
                 local args = {...}
                 local body = {}
                 local named = (#args == 1 and type(args[1]) == "table")
