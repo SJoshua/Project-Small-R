@@ -1,12 +1,15 @@
--------------------------------------------
--- Project Small R
--- Main
--- Au: SJoshua
--------------------------------------------
-dofile("api.lua")
-dofile("soul.lua")
-dofile("config.lua")
+local bot = {}
 
-print("Project Small R: Link Start.")
+local api = require("api")
+local utils = require("utils")
 
-bot.run()
+function bot.run()
+    logger:info("link start.")
+    local t = api.fetch()
+    for k, v in pairs(t) do
+        bot[k] = v
+    end
+    print(utils.encode(bot.getMe()))
+end
+
+return bot

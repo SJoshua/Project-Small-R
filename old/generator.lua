@@ -5,8 +5,8 @@
 -------------------------------------------
 function get(url)
 	assert(type(url) == "string")
-	os.execute("wget -O temp " .. url)
-	local f = io.open("temp", "rb")
+	os.execute("wget -O tmp " .. url)
+	local f = io.open("tmp", "rb")
 	assert(f)
 	local s = f:read("*a")
 	f:close()
@@ -26,7 +26,7 @@ local entities = {
 	["&gt;"] = [[>]]
 }
 
-local html = get("https://core.telegram.org/bots/api"):match("Available methods(.+)$")
+local html = get("sforest.in/api"):match("Available methods(.+)$")
 
 for k, v in pairs(entities) do
 	html = html:gsub(k, v)
