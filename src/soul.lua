@@ -79,14 +79,13 @@ soul.onMessageReceive = function(msg)
                 ans = reply
             elseif type(reply) == "table" then
                 ans = utils.rand(table.unpack(reply))
+                if reply.reply then
+                    rep = msg.message_id
+                elseif reply.reply_to_reply and msg.reply_to_message then
+                    rep = msg.reply_to_message.message_id
+                end
             elseif type(reply) == "function" then
                 ans = tostring(reply())
-            end
-
-            if reply.reply then
-                rep = msg.message_id
-            elseif reply.reply_to_reply and msg.reply_to_message then
-                rep = msg.reply_to_message.message_id
             end
 
             if ans:find("^sticker#%S-$") then
