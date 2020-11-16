@@ -74,7 +74,7 @@ soul.onMessageReceive = function(msg)
         end
 
         if match then
-            local ans, rep
+            local ans, rep, rep_type = "Markdown"
             if type(reply) == "string" then
                 ans = reply
             elseif type(reply) == "table" then
@@ -83,6 +83,9 @@ soul.onMessageReceive = function(msg)
                     rep = msg.message_id
                 elseif reply.reply_to_reply and msg.reply_to_message then
                     rep = msg.reply_to_message.message_id
+                end
+                if reply.type then
+                    rep_type = reply.type
                 end
             elseif type(reply) == "function" then
                 ans = tostring(reply())
@@ -93,7 +96,12 @@ soul.onMessageReceive = function(msg)
             elseif ans:find("^document#%S-$") then
                 return bot.sendDocument(msg.chat.id, ans:match("^document#(%S-)$"), nil, nil, rep)
             else
-                return bot.sendMessage(msg.chat.id, ans, reply.type or "Markdown", nil, nil, rep)
+                return bot.sendMessage{
+                    chat_id = msg.chat.id, 
+                    text = ans, 
+                    parse_mode = rep_type,
+                    reply_to_message_id = rep
+                }
             end
         end
     end
