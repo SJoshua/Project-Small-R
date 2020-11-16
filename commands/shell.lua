@@ -1,5 +1,5 @@
 local shell = {
-    func = function()
+    func = function(msg)
         local cmd = msg.text:match("/shell%s*(.-)%s*$")
         os.execute(cmd .. " > tmp")
         local f = io.open("tmp", "r")
