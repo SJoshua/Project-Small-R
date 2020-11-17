@@ -11,7 +11,7 @@ https.TIMEOUT = 5
 local utils = require("utils")
 
 ---@param method string
----@param parameters table 
+---@param parameters table
 function api.makeRequest(method, parameters)
     local response = {}
 
@@ -32,9 +32,9 @@ function api.makeRequest(method, parameters)
             method = "GET",
             sink = ltn12.sink.table(response),
         }
-    else 
+    else
         local body, boundary = encode(parameters)
-        
+
         success, code, headers, status = https.request{
             url = "https://api.telegram.org/bot" .. config.token .. "/" .. method,
             method = "POST",
@@ -65,7 +65,7 @@ end
 function api.fetch()
     logger:info("fetching latest API ...")
     local html = utils.curl("https://core.telegram.org/bots/api")
-    html = html:match("Available methods(.+)$") 
+    html = html:match("Available methods(.+)$")
     html = utils.htmlDecode(html)
     local apis = {}
 
@@ -75,9 +75,9 @@ function api.fetch()
             parameters = {},
             order = {}
         }
-        
+
         setmetatable(t, {
-            __call = function(t, ...) 
+            __call = function(t, ...)
                 local args = {...}
                 local body = {}
                 local named = (#args == 1 and type(args[1]) == "table")
@@ -91,11 +91,11 @@ function api.fetch()
                         return false
                     end
                 end
-                
+
                 return api.makeRequest(method, body)
             end,
 
-            __tostring = function() 
+            __tostring = function()
                 return table.concat({
                     "[method] ", method, "\n",
                     "[description] ", t.description, "\n",
@@ -103,7 +103,7 @@ function api.fetch()
                 })
             end
         })
-        
+
         local description, parameter
 
         if content:find("table") then
@@ -114,7 +114,7 @@ function api.fetch()
         end
 
         t.description = description:gsub("<.->", ""):gsub("\n\n", "\n")
-        
+
         for name, var, req, des in parameter:gmatch('<tr>%s*<td>(.-)</td>%s*<td>(.-)</td>%s*<td>(.-)</td>%s*<td>(.-)</td>%s*</tr>') do
             table.insert(t.order, name)
             t.parameters[name] = {
@@ -123,10 +123,10 @@ function api.fetch()
                 description = des:gsub("<.->", "")
             }
         end
-        
+
         apis[method] = t
     end
-    
+
     return apis
 end
 

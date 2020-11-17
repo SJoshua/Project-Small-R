@@ -98,8 +98,8 @@ soul.onMessageReceive = function(msg)
                 return bot.sendDocument(msg.chat.id, ans:match("^document#(%S-)$"), nil, nil, rep)
             else
                 return bot.sendMessage{
-                    chat_id = msg.chat.id, 
-                    text = ans, 
+                    chat_id = msg.chat.id,
+                    text = ans,
                     parse_mode = rep_type,
                     reply_to_message_id = rep
                 }

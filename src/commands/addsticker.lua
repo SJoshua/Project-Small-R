@@ -22,6 +22,8 @@ local addsticker = {
         local url = "u" .. msg.from.id .. "_by_" .. bot.info.username
         local ret 
 
+        local try
+        
         try = function()
             ret = bot.createNewStickerSet{
                 user_id = msg.from.id, 

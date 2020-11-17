@@ -1,6 +1,6 @@
 local shell = {
     func = function(msg)
-        local cmd = msg.text:match("/shell%s*(.-)%s*$")"
+        local cmd = msg.text:match("/shell%s*(.-)%s*$")
         local f = io.popen(cmd, "r")
         local res = f:read("*a")
         f:close()
