@@ -8,10 +8,12 @@ function utils.curl(url)
 end
 
 function utils.wget(url)
-    os.execute('wget --timeout=0 --waitretry=0 --tries=1 -O wget.tmp "' .. url .. '"')
-    local f = io.open("wget.tmp", "r")
+    local fn = "/tmp/" ..tostring(math.random())
+    os.execute('wget --timeout=0 --waitretry=0 --tries=1 -O ' .. fn .. ' "' .. url .. '"')
+    local f = io.open(fn, "rb")
     local ret = f:read("*a")
     f:close()
+    os.remove(fn)
     return ret
 end
 
@@ -69,7 +71,7 @@ function utils.save(t, path)
     assert(type(t) == "table")
     local f = io.open(path, "w")
     f:write("return " .. utils.encode(t))
-    f:close()    
+    f:close()
 end
 
 function utils.sandbox(t)

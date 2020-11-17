@@ -18,7 +18,7 @@ local fetch = {
             bot.sendMessage{
                 chat_id = msg.chat.id,
                 reply_to_message_id = msg.message_id,
-                text = "*[latest commit]*```\n" .. s .. "\n```",
+                text = "*[latest commit]*\n```\n" .. s .. "\n```",
                 parse_mode = "Markdown"
             }
 
