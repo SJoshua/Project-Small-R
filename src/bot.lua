@@ -1,7 +1,6 @@
 local bot = {}
 
 local api = require("api")
-local utils = require("utils")
 local soul = require("soul")
 
 function bot.analyzeMessageType(upd)
@@ -79,21 +78,14 @@ function bot.analyzeMessageType(upd)
     end
 end
 
+-- reload soul only
 function bot.reload()
     package.loaded.soul = nil
-    package.loaded.bot = nil
-    package.loaded.api = nil
     package.loaded.utils = nil
     package.loaded.conversation = nil
-    soul = require("soul")
-    bot = require("bot")
-    api = require("api")
 
-    local t = api.fetch()
-    for k, v in pairs(t) do
-        bot[k] = v
-    end
-    
+    soul = require("soul")
+
     return true
 end
 
@@ -115,6 +107,11 @@ end
 
 function bot.run()
     logger:info("link start.")
+
+    local t = api.fetch()
+    for k, v in pairs(t) do
+        bot[k] = v
+    end
 
     local ret = bot.getMe()
     if ret then
