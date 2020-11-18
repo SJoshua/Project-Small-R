@@ -1,7 +1,7 @@
 local utils = require("utils")
 
 local conversation = {
-    ["ping"] = "pong!",
+    ["^%s*ping%s*$"] = "pong!",
     ["1%D-1%D-4%D-5%D-1%D-4"] = "sticker#CAADBQADLAAD1vXIAYjCdJop7aEIAg",
     [function(text) 
         return #text == 233 
