@@ -19,6 +19,8 @@ function bot.analyzeMessageType(upd)
             return "Photo"
         elseif msg.sticker then
             return "Sticker"
+        elseif msg.dice then
+            return "Dice"
         elseif msg.video_note then
             return "VideoNote"
         elseif msg.contact then

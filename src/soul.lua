@@ -108,15 +108,15 @@ soul.onMessageReceive = function(msg)
     end
 end
 
-soul.onEditedMessageReceive = function (msg)
+soul.onEditedMessageReceive = function(msg)
     -- process
 end
 
-soul.onLeftChatMembersReceive = function (msg)
+soul.onLeftChatMembersReceive = function(msg)
     
 end
 
-soul.onNewChatMembersReceive = function (msg)
+soul.onNewChatMembersReceive = function(msg)
     
 end
 
@@ -124,35 +124,43 @@ soul.onPhotoReceive = function(msg)
     -- process
 end
 
-soul.onAudioReceive = function (msg)
+soul.onAudioReceive = function(msg)
     -- process
 end
 
-soul.onVideoReceive = function (msg)
+soul.onVideoReceive = function(msg)
     -- process
 end
 
-soul.onDocumentReceive = function (msg)
+soul.onDocumentReceive = function(msg)
     -- process
 end
 
-soul.onGameReceive = function (msg)
+soul.onGameReceive = function(msg)
     -- process
 end
 
-soul.onStickerReceive = function (msg)
+soul.onStickerReceive = function(msg)
+
+end
+
+soul.onDiceReceive = function(msg)
     
 end
 
-soul.onVideoNoteReceive = function (msg)
+soul.onVideoNoteReceive = function(msg)
 
 end
 
-soul.onContactReceive = function (msg)
+soul.onContactReceive = function(msg)
 
 end
 
-soul.onLocationReceive = function (msg)
+soul.onLocationReceive = function(msg)
+
+end
+
+soul.onPinnedMessageReceive = function(msg)
 
 end
 
