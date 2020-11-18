@@ -88,6 +88,12 @@ function bot.reload()
     soul = require("soul")
     bot = require("bot")
     api = require("api")
+
+    local t = api.fetch()
+    for k, v in pairs(t) do
+        bot[k] = v
+    end
+    
     return true
 end
 
@@ -100,20 +106,15 @@ function bot.getUpdates(offset, limit, timeout, allowed_updates)
     return api.makeRequest("getUpdates", body)
 end
 
+function bot.downloadFile(file_id, path)
+    local ret = bot.getFile(file_id)
+    if ret and ret.ok then
+        os.execute(string.format("wget --timeout=5 -O %s https://api.telegram.org/file/bot%s/%s", path or "tmp", config.token, ret.result.file_path))
+    end
+end
+
 function bot.run()
     logger:info("link start.")
-
-    local t = api.fetch()
-    for k, v in pairs(t) do
-        bot[k] = v
-    end
-
-    bot.downloadFile = function(file_id, path)
-        local ret = bot.getFile(file_id)
-        if ret and ret.ok then
-            os.execute(string.format("wget --timeout=5 -O %s https://api.telegram.org/file/bot%s/%s", path or "tmp", config.token, ret.result.file_path))
-        end
-    end
 
     local ret = bot.getMe()
     if ret then
