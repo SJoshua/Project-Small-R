@@ -45,6 +45,9 @@ function utils.encodeVar(var)
     if type(var) == "string" then
         return '"' .. var:gsub("\\", "\\\\"):gsub('"', [[\"]]):gsub("\n", [[\n]]):gsub("\r", [[\r]]) .. '"'
     elseif type(var) == "number" then
+        if var == math.floor(var) then
+            var = math.floor(var)
+        end
         return var
     elseif type(var) == "table" then
         return utils.encode(var)
