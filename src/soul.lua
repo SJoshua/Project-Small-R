@@ -108,61 +108,23 @@ soul.onMessageReceive = function(msg)
     end
 end
 
-soul.onEditedMessageReceive = function(msg)
-    -- process
-end
+soul.ignore = function(msg) end
 
-soul.onLeftChatMembersReceive = function(msg)
-    
-end
-
-soul.onNewChatMembersReceive = function(msg)
-    
-end
-
-soul.onPhotoReceive = function(msg)
-    -- process
-end
-
-soul.onAudioReceive = function(msg)
-    -- process
-end
-
-soul.onVideoReceive = function(msg)
-    -- process
-end
-
-soul.onDocumentReceive = function(msg)
-    -- process
-end
-
-soul.onGameReceive = function(msg)
-    -- process
-end
-
-soul.onStickerReceive = function(msg)
-
-end
-
-soul.onDiceReceive = function(msg)
-    
-end
-
-soul.onVideoNoteReceive = function(msg)
-
-end
-
-soul.onContactReceive = function(msg)
-
-end
-
-soul.onLocationReceive = function(msg)
-
-end
-
-soul.onPinnedMessageReceive = function(msg)
-
-end
+soul.onEditedMessageReceive = soul.ignore
+soul.onLeftChatMembersReceive = soul.ignore
+soul.onNewChatMembersReceive = soul.ignore
+soul.onPhotoReceive = soul.ignore
+soul.onAudioReceive = soul.ignore
+soul.onVoiceReceive = soul.ignore
+soul.onVideoReceive = soul.ignore
+soul.onDocumentReceive = soul.ignore
+soul.onGameReceive = soul.ignore
+soul.onStickerReceive = soul.ignore
+soul.onDiceReceive = soul.ignore
+soul.onVideoNoteReceive = soul.ignore
+soul.onContactReceive = soul.ignore
+soul.onLocationReceive = soul.ignore
+soul.onPinnedMessageReceive = soul.ignore
 
 setmetatable(soul, {
     __index = function(t, key)
