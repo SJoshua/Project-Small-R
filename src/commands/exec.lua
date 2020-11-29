@@ -16,7 +16,7 @@ local exec = {
                 local t = {pcall(load("_ENV = utils.sandbox{'math', 'string', 'pairs', 'cjson', 'table', 'message', 'base64', 'md5'}; string.dump = nil; " .. string.match(msg.text, "/exec(.*)")))}
 
                 local ts = string.format("[status] %s\n", tostring(t[1]))
-                for i = 2, table.maxn(t) do
+                for i = 2, #t do
                     ts = ts .. string.format("[return %d] %s\n", i-1, tostring(t[i]))
                 end
                 if #ts > 4096 then
