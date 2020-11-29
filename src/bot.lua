@@ -8,6 +8,8 @@ function bot.analyzeMessageType(upd)
         local msg = upd.message
         if msg.audio then
             return "Audio"
+        elseif msg.voice then
+            return "Voice"
         elseif msg.video then
             return "Video"
         elseif msg.document then
