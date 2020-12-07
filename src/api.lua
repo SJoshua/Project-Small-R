@@ -55,10 +55,10 @@ function api.makeRequest(method, parameters)
             logger:debug("response " .. utils.encode(msg))
             return msg
         else
-            logger:error("failed to decode: " .. msg)
+            logger:debug("failed to decode: " .. msg)
         end
     else
-        logger:error("failed to request: " .. code)
+        logger:debug("failed to request: " .. code)
     end
 end
 
