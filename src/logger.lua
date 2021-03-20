@@ -1,9 +1,10 @@
-
 local logging = require("logging")
 
 local tg_logger = logging.new(
     function(self, level, msg)
-        bot.sendMessage(config.monitor, ("*[%s]*\n```\n%s\n```"):format(level, msg), "Markdown")
+	if type(bot) == "table" then
+	        bot.sendMessage(config.monitor, ("*[%s]*\n```\n%s\n```"):format(level, msg), "Markdown")
+	end
         return true
     end
 )
