@@ -2,8 +2,8 @@ local cipher = {
     func = function(msg)
         local code = msg.text:match("([%d%s]+)")
         local t = {}
-        flag1 = true
-        flag2 = true
+        local flag1 = true
+        local flag2 = true
         for part in code:gmatch("(%d+)") do
             table.insert(t, tonumber(part))
             if t[#t] < 0 or t[#t] > 26 then
@@ -13,7 +13,7 @@ local cipher = {
                 flag2 = false
             end
         end
-        extra = ""
+        local extra = ""
         if flag1 then
             extra = "\nDetected Cipher Pattern: `"
             for i = 1, #t do

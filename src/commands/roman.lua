@@ -4,8 +4,8 @@ local roman_command = {
     func = function(msg)
         local code = msg.text:match("/roman%s*([IVXLCDM%s]+)")
         local t = {}
-        flag1 = true
-        flag2 = true
+        local flag1 = true
+        local flag2 = true
         for part in code:gmatch("([IVXLCDM]+)") do
             table.insert(t, roman.decode(part))
             if t[#t] < 0 or t[#t] > 26 then
@@ -15,7 +15,7 @@ local roman_command = {
                 flag2 = false
             end
         end
-        extra = ""
+        local extra = ""
         if flag1 then
             extra = "\nDetected Cipher Pattern: `"
             for i = 1, #t do

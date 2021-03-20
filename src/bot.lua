@@ -1,7 +1,6 @@
 local bot = {}
 
 local api = require("api")
-local utils = require("utils")
 local soul = require("soul")
 
 function bot.analyzeMessageType(upd)
@@ -9,6 +8,8 @@ function bot.analyzeMessageType(upd)
         local msg = upd.message
         if msg.audio then
             return "Audio"
+        elseif msg.voice then
+            return "Voice"
         elseif msg.video then
             return "Video"
         elseif msg.document then
@@ -19,6 +20,8 @@ function bot.analyzeMessageType(upd)
             return "Photo"
         elseif msg.sticker then
             return "Sticker"
+        elseif msg.dice then
+            return "Dice"
         elseif msg.video_note then
             return "VideoNote"
         elseif msg.contact then
@@ -77,23 +80,15 @@ function bot.analyzeMessageType(upd)
     end
 end
 
+-- reload soul only
 function bot.reload()
     package.loaded.soul = nil
-    package.loaded.bot = nil
-    package.loaded.api = nil
     package.loaded.utils = nil
     package.loaded.conversation = nil
-    soul = require("soul")
-    bot = require("bot")
-    api = require("api")
-    return true
-end
 
-function bot.downloadFile(file_id, path)
-    local ret = bot.getFile(file_id)
-    if ret and ret.ok then
-        os.execute(string.format("wget --timeout=5 -O %s https://api.telegram.org/file/bot%s/%s", path or "tmp", config.token, ret.result.file_path))
-    end
+    soul = require("soul")
+
+    return true
 end
 
 function bot.getUpdates(offset, limit, timeout, allowed_updates)
@@ -103,6 +98,13 @@ function bot.getUpdates(offset, limit, timeout, allowed_updates)
     body.timeout = timeout
     body.allowed_updates = allowed_updates
     return api.makeRequest("getUpdates", body)
+end
+
+function bot.downloadFile(file_id, path)
+    local ret = bot.getFile(file_id)
+    if ret and ret.ok then
+        os.execute(string.format("wget --timeout=5 -O %s https://api.telegram.org/file/bot%s/%s", path or "tmp", config.token, ret.result.file_path))
+    end
 end
 
 function bot.run()
@@ -150,7 +152,6 @@ end
 setmetatable(bot, {
     __index = function(t, key)
         logger:warn("called undefined method " .. key)
-        return (function() return false end)
     end
 })
 

@@ -70,23 +70,26 @@ soul.onMessageReceive = function(msg)
                 match = false
             end
         elseif type(keyword) == "function" then
-            match = keyword()
+            match = keyword(msg.text)
         end
 
         if match then
             local ans, rep
+            local rep_type = "Markdown"
             if type(reply) == "string" then
                 ans = reply
             elseif type(reply) == "table" then
-                ans = rand(unpack(reply))
+                ans = utils.rand(table.unpack(reply))
+                if reply.reply then
+                    rep = msg.message_id
+                elseif reply.reply_to_reply and msg.reply_to_message then
+                    rep = msg.reply_to_message.message_id
+                end
+                if reply.type then
+                    rep_type = reply.type
+                end
             elseif type(reply) == "function" then
                 ans = tostring(reply())
-            end
-
-            if reply.reply then
-                rep = msg.message_id
-            elseif reply.reply_to_reply and msg.reply_to_message then
-                rep = msg.reply_to_message.message_id
             end
 
             if ans:find("^sticker#%S-$") then
@@ -94,59 +97,34 @@ soul.onMessageReceive = function(msg)
             elseif ans:find("^document#%S-$") then
                 return bot.sendDocument(msg.chat.id, ans:match("^document#(%S-)$"), nil, nil, rep)
             else
-                return bot.sendMessage(msg.chat.id, ans, reply.type or "Markdown", nil, nil, rep)
+                return bot.sendMessage{
+                    chat_id = msg.chat.id,
+                    text = ans,
+                    parse_mode = rep_type,
+                    reply_to_message_id = rep
+                }
             end
         end
     end
 end
 
-soul.onEditedMessageReceive = function (msg)
-    -- process
-end
+soul.ignore = function(msg) end
 
-soul.onLeftChatMembersReceive = function (msg)
-    
-end
-
-soul.onNewChatMembersReceive = function (msg)
-    
-end
-
-soul.onPhotoReceive = function(msg)
-    -- process
-end
-
-soul.onAudioReceive = function (msg)
-    -- process
-end
-
-soul.onVideoReceive = function (msg)
-    -- process
-end
-
-soul.onDocumentReceive = function (msg)
-    -- process
-end
-
-soul.onGameReceive = function (msg)
-    -- process
-end
-
-soul.onStickerReceive = function (msg)
-    
-end
-
-soul.onVideoNoteReceive = function (msg)
-
-end
-
-soul.onContactReceive = function (msg)
-
-end
-
-soul.onLocationReceive = function (msg)
-
-end
+soul.onEditedMessageReceive = soul.ignore
+soul.onLeftChatMembersReceive = soul.ignore
+soul.onNewChatMembersReceive = soul.ignore
+soul.onPhotoReceive = soul.ignore
+soul.onAudioReceive = soul.ignore
+soul.onVoiceReceive = soul.ignore
+soul.onVideoReceive = soul.ignore
+soul.onDocumentReceive = soul.ignore
+soul.onGameReceive = soul.ignore
+soul.onStickerReceive = soul.ignore
+soul.onDiceReceive = soul.ignore
+soul.onVideoNoteReceive = soul.ignore
+soul.onContactReceive = soul.ignore
+soul.onLocationReceive = soul.ignore
+soul.onPinnedMessageReceive = soul.ignore
 
 setmetatable(soul, {
     __index = function(t, key)

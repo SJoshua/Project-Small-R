@@ -2,3 +2,4 @@ config.lua
 tmp
 wget.tmp
 sticker
+*.log

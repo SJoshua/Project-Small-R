@@ -1,15 +1,9 @@
 local shell = {
     func = function(msg)
         local cmd = msg.text:match("/shell%s*(.-)%s*$")
-        os.execute(cmd .. " > tmp")
-        local f = io.open("tmp", "r")
-        local res
-        if f then
-            res = f:read("*a")
-            f:close()
-        else
-            res = "failed to read."
-        end
+        local f = io.popen(cmd, "r")
+        local res = f:read("*a")
+        f:close()
         bot.sendMessage(msg.chat.id, "[result]\n" .. tostring(res), nil, nil, nil, msg.message_id)
     end,
     form = "/shell <command>",
