@@ -5,6 +5,7 @@ local utils = require("utils")
 local lfs = require("lfs")
 
 commands = {}
+broadcasts = {}
 
 for file in lfs.dir("commands") do
     local command = file:match("^(.+).lua")
@@ -17,6 +18,26 @@ for file in lfs.dir("commands") do
             logger:info("loaded " .. path)
         else
             logger:error(ret)
+        end
+    end
+end
+
+soul.tick = function()
+    local group_list = {
+        -1001497094866,
+        -1001126076013,
+        -1001103633366,
+        -1001208316368,
+        -1001487484295
+    }
+    if lfs.touch("~/.emergency") then
+        os.execute("rm ~/.emergency")
+        for k, v in pairs(group_list) do
+            local ret = bot.sendMessage{
+                chat_id = v,
+                text = "有人向 @SJoshua 发起了紧急联络请求。如果您能够（在线下）联系到 Master 的话，麻烦使用 /emergency_informed 来删除广播信息，非常感谢。"
+            }
+            table.insert(broadcasts, {chat_id = v, message_id = ret.result.message_id})
         end
     end
 end

@@ -122,7 +122,15 @@ function bot.run()
     end
 
     local offset = 0
-    local threads = {}
+    local threads = {
+        coroutine.create(function() 
+            while true do
+                pcall(soul.tick)
+                coroutine.yield()
+            end
+        end)
+    }
+
     while true do
         local updates = bot.getUpdates(offset, config.limit, config.timeout)
         if updates and updates.result then
