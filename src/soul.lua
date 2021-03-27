@@ -30,8 +30,8 @@ soul.tick = function()
         -1001208316368,
         -1001487484295
     }
-    if lfs.touch("/var/www/server.sforest.in/.emergency") then
-        os.execute("rm /var/www/server.sforest.in/.emergency")
+    if lfs.touch("/tmp/.emergency") then
+        os.execute("rm /tmp/.emergency")
         for k, v in pairs(group_list) do
             local ret = bot.sendMessage{
                 chat_id = v,
