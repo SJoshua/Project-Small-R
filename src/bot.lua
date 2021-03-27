@@ -122,14 +122,7 @@ function bot.run()
     end
 
     local offset = 0
-    local threads = {
-        coroutine.create(function() 
-            while true do
-                pcall(soul.tick)
-                coroutine.yield()
-            end
-        end)
-    }
+    local threads = {}
 
     while true do
         local updates = bot.getUpdates(offset, config.limit, config.timeout)
@@ -145,6 +138,11 @@ function bot.run()
                 offset = upd.update_id + 1
             end
         end
+
+        threads[0] = coroutine.create(function()
+            soul.tick()
+        end)
+        
         for uid, thread in pairs(threads) do
             local status, res = coroutine.resume(thread)
             if not status then
