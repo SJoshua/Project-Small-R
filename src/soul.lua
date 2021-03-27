@@ -30,7 +30,7 @@ soul.tick = function()
         -1001208316368,
         -1001487484295
     }
-    if lfs.touch("/home/share/.emergency") then
+    if io.open("/home/share/.emergency", "r") then
         os.execute("rm /home/share/.emergency")
         for k, v in pairs(group_list) do
             local ret = bot.sendMessage{
