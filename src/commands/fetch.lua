@@ -1,6 +1,6 @@
 local fetch = {
     func = function(msg)
-        local f = io.popen("cd ~/small-r/Project-Small-R/ && git pull", "r")
+        local f = io.popen("git pull", "r")
         local s = f:read("*a")
         f:close()
 
@@ -11,7 +11,7 @@ local fetch = {
                 text = "Already up to date."
             }
         else 
-            local f = io.popen("cd ~/small-r/Project-Small-R/ && git log -1", "r")
+            local f = io.popen("git log -1", "r")
             local s = f:read("*a")
             f:close()
 
