@@ -30,7 +30,7 @@ function bot.analyzeMessageType(upd)
             return "Location"
         elseif msg.venue then
             return "Venue"
-        elseif msg.new_chat_members then
+        elseif msg.new_chat_members or msg.new_chat_member then
             return "NewChatMembers"
         elseif msg.left_chat_member then
             return "LeftChatMembers"
@@ -56,6 +56,10 @@ function bot.analyzeMessageType(upd)
             return "SuccessfulPayment"
         elseif msg.chat.type == "channel" then
             return "ChannelMessage"
+        elseif msg.voice_chat_started then
+            return "VoiceChatStarted"
+        elseif msg.voice_chat_ended then
+            return "VoiceChatEnded"
         else
             return "Message"
         end

@@ -1,5 +1,6 @@
 {
     "Lua.diagnostics.disable": [
         "lowercase-global"
-    ]
+    ],
+    "python.pythonPath": "/bin/python3"
 }

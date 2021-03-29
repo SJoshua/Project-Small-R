@@ -3,3 +3,4 @@ tmp
 wget.tmp
 sticker
 *.log
+.vscode/settings.json

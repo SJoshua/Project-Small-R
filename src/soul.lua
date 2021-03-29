@@ -43,6 +43,10 @@ soul.tick = function()
 end
 
 soul.onMessageReceive = function(msg)
+    if not msg.text then
+        error("Cannot handle this message: " .. utils.encode(msg))
+    end
+
     msg.text = msg.text:gsub("@" .. bot.info.username, "")
 
     msg.chat.id = math.floor(msg.chat.id)
@@ -146,6 +150,8 @@ soul.onVideoNoteReceive = soul.ignore
 soul.onContactReceive = soul.ignore
 soul.onLocationReceive = soul.ignore
 soul.onPinnedMessageReceive = soul.ignore
+soul.onVoiceChatStartedReceive = soul.ignore
+soul.onVoiceChatEndedReceive = soul.ignore
 
 setmetatable(soul, {
     __index = function(t, key)
