@@ -1,8 +1,9 @@
 local savegif = {
     func = function(msg)
-        if msg.reply_to_message.video and msg.reply_to_message.video.mime_type == "video/mp4" then
-            if msg.reply_to_message.video.file_size <= 20480000 then
-                bot.downloadFile(msg.reply_to_message.video.file_id, "tmp.mp4")
+        local target = msg.reply_to_message.video or msg.reply_to_message.document
+        if target and target.mime_type == "video/mp4" then
+            if target.file_size <= 20480000 then
+                bot.downloadFile(target.file_id, "tmp.mp4")
                 os.remove("tmp.gif")
                 local factor = tonumber(msg.text:match("([%d%.]+)")) or 1
                 os.execute("gifski tmp.mp4 --output tmp.gif --fast-forward " .. factor)
