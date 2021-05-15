@@ -15,7 +15,7 @@ local savegif = {
                 os.execute("gifski tmp.mp4 --output tmp.gif --fast-forward " .. factor)
                 local fn = os.time() .. ".gif"
                 os.execute("mv tmp.gif /var/www/server.sforest.in/" .. fn)
-                bot.editMessage{
+                bot.editMessageText{
                     chat_id = msg.chat.id,
                     message_id = sent_msg.result.message_id,
                     text = "[Click to download](https://server.sforest.in/" .. fn .. ")",
