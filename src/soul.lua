@@ -142,6 +142,7 @@ soul.onPhotoReceive = soul.ignore
 soul.onAudioReceive = soul.ignore
 soul.onVoiceReceive = soul.ignore
 soul.onVideoReceive = soul.ignore
+soul.onPollReceive = soul.ignore
 soul.onDocumentReceive = soul.ignore
 soul.onGameReceive = soul.ignore
 soul.onStickerReceive = soul.ignore
