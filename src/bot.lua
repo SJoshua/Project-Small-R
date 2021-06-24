@@ -30,6 +30,8 @@ function bot.analyzeMessageType(upd)
             return "Location"
         elseif msg.venue then
             return "Venue"
+        elseif msg.poll then
+            return "Poll"
         elseif msg.new_chat_members or msg.new_chat_member then
             return "NewChatMembers"
         elseif msg.left_chat_member then
