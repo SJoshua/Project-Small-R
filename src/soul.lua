@@ -6,6 +6,44 @@ local lfs = require("lfs")
 
 commands = {}
 broadcasts = {}
+triggers = {
+    { 
+        timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 45},
+        func = function() 
+            bot.sendMessage{
+                chat_id = -324653090,
+                text = "吃饭啦！"
+            }
+        end
+    },
+    { 
+        timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 50},
+        func = function() 
+            bot.sendMessage{
+                chat_id = -324653090,
+                text = "吃饭啦！！"
+            }
+        end
+    },
+    { 
+        timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 55},
+        func = function() 
+            bot.sendMessage{
+                chat_id = -324653090,
+                text = "吃饭啦！！！"
+            }
+        end
+    },
+    { 
+        timestamp = os.time{year = 2021, month = 6, day = 25, hour = 12, min = 0},
+        func = function() 
+            bot.sendMessage{
+                chat_id = -324653090,
+                text = "吃饭啦！！！吃饭啦！！！吃饭啦！！！"
+            }
+        end
+    },
+}
 
 for file in lfs.dir("commands") do
     local command = file:match("^(.+).lua")
@@ -38,6 +76,13 @@ soul.tick = function()
                 text = "有人向 @SJoshua 发起了紧急联络请求。如果您能够（在线下）联系到 Master 的话，麻烦使用 /emergency_informed 来删除广播信息，非常感谢。"
             }
             table.insert(broadcasts, {chat_id = v, message_id = ret.result.message_id})
+        end
+    end
+
+    for k, v in pairs(triggers) do
+        if os.time() + 8 * 60 * 60 > v.timestamp then
+            v.timestamp = v.timestamp + 24 * 60 * 60
+            v.func()
         end
     end
 end
