@@ -7,42 +7,42 @@ local lfs = require("lfs")
 commands = {}
 broadcasts = {}
 triggers = {
-    { 
-        timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 45},
-        func = function() 
-            bot.sendMessage{
-                chat_id = -324653090,
-                text = "吃饭啦！"
-            }
-        end
-    },
-    { 
-        timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 50},
-        func = function() 
-            bot.sendMessage{
-                chat_id = -324653090,
-                text = "吃饭啦！！"
-            }
-        end
-    },
-    { 
-        timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 55},
-        func = function() 
-            bot.sendMessage{
-                chat_id = -324653090,
-                text = "吃饭啦！！！"
-            }
-        end
-    },
-    { 
-        timestamp = os.time{year = 2021, month = 6, day = 25, hour = 12, min = 0},
-        func = function() 
-            bot.sendMessage{
-                chat_id = -324653090,
-                text = "吃饭啦！！！吃饭啦！！！吃饭啦！！！"
-            }
-        end
-    },
+    -- {
+    --     timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 45},
+    --     func = function()
+    --         bot.sendMessage{
+    --             chat_id = -324653090,
+    --             text = "吃饭啦！"
+    --         }
+    --     end
+    -- },
+    -- {
+    --     timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 50},
+    --     func = function()
+    --         bot.sendMessage{
+    --             chat_id = -324653090,
+    --             text = "吃饭啦！！"
+    --         }
+    --     end
+    -- },
+    -- {
+    --     timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 55},
+    --     func = function()
+    --         bot.sendMessage{
+    --             chat_id = -324653090,
+    --             text = "吃饭啦！！！"
+    --         }
+    --     end
+    -- },
+    -- {
+    --     timestamp = os.time{year = 2021, month = 6, day = 25, hour = 12, min = 0},
+    --     func = function()
+    --         bot.sendMessage{
+    --             chat_id = -324653090,
+    --             text = "吃饭啦！！！吃饭啦！！！吃饭啦！！！"
+    --         }
+    --     end
+    -- },
 }
 
 for file in lfs.dir("commands") do
@@ -105,18 +105,29 @@ soul.onMessageReceive = function(msg)
         return true
     end
 
+    -- special event
+    if msg.text:gsub("%s*@%w+%s*", ""):find("[%a%p%s]") then
+        if msg.chat.id == -1001103633366 and os.date("%Y-%m-%d", os.time() + 8 * 3600) == "2021-10-08" then
+            return bot.sendMessage{
+                chat_id = bot.chat.id,
+                text = "检测到您的发言中含有非中文字段。",
+                reply_to_message_id = msg.message_id
+            }
+        end
+    end
+
     for k, v in pairs(commands) do
         if msg.text:find("^%s*/" .. k) and not msg.text:find("^%s*/" .. k .. "%S") then
             if v.limit then
                 if v.limit.disable then
                     return bot.sendMessage{
-                        chat_id = msg.chat.id, 
+                        chat_id = msg.chat.id,
                         text = "Sorry, the command is disabled.",
                         reply_to_message_id = msg.message_id
                     }
                 elseif v.limit.master and msg.from.username ~= config.master then
                     return bot.sendMessage{
-                        chat_id = msg.chat.id, 
+                        chat_id = msg.chat.id,
                         text = "Sorry, permission denied.",
                         reply_to_message_id = msg.message_id
                     }
