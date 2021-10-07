@@ -109,7 +109,7 @@ soul.onMessageReceive = function(msg)
     if msg.text:gsub("%s*@%w+%s*", ""):find("[%a%p%s]") then
         if msg.chat.id == -1001103633366 and os.date("%Y-%m-%d", os.time() + 8 * 3600) == "2021-10-08" then
             return bot.sendMessage{
-                chat_id = bot.chat.id,
+                chat_id = msg.chat.id,
                 text = "检测到您的发言中含有非中文字段。",
                 reply_to_message_id = msg.message_id
             }
