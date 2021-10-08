@@ -106,7 +106,7 @@ soul.onMessageReceive = function(msg)
     end
 
     -- special event
-    if msg.text:gsub("%s*@%w+%s*", ""):find("[%a%p%s]") then
+    if msg.text:gsub("%s*@%w+%s*", ""):find("[%a%p ]") then
         if msg.chat.id == -1001497094866 and os.date("%Y-%m-%d", os.time() + 8 * 3600) == "2021-10-08" then
             return bot.sendMessage{
                 chat_id = msg.chat.id,
