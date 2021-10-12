@@ -80,7 +80,10 @@ soul.onMessageReceive = function(msg)
         end
     end
 
-    if msg.chat.id == -1001497094866 and os.date("%Y-%m-%d", os.time() + 8 * 3600) == "2021-10-13" then
+    if
+        (msg.chat.id == -1001497094866 or msg.chat.id == -1001103633366) and
+            os.date("%Y-%m-%d", os.time() + 8 * 3600) == "2021-10-13"
+     then
         local f = io.open("text_tmp", "w")
         f:write(msg.text)
         f:close()
