@@ -6,44 +6,7 @@ local lfs = require("lfs")
 
 commands = {}
 broadcasts = {}
-triggers = {
-    -- {
-    --     timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 45},
-    --     func = function()
-    --         bot.sendMessage{
-    --             chat_id = -324653090,
-    --             text = "吃饭啦！"
-    --         }
-    --     end
-    -- },
-    -- {
-    --     timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 50},
-    --     func = function()
-    --         bot.sendMessage{
-    --             chat_id = -324653090,
-    --             text = "吃饭啦！！"
-    --         }
-    --     end
-    -- },
-    -- {
-    --     timestamp = os.time{year = 2021, month = 6, day = 25, hour = 11, min = 55},
-    --     func = function()
-    --         bot.sendMessage{
-    --             chat_id = -324653090,
-    --             text = "吃饭啦！！！"
-    --         }
-    --     end
-    -- },
-    -- {
-    --     timestamp = os.time{year = 2021, month = 6, day = 25, hour = 12, min = 0},
-    --     func = function()
-    --         bot.sendMessage{
-    --             chat_id = -324653090,
-    --             text = "吃饭啦！！！吃饭啦！！！吃饭啦！！！"
-    --         }
-    --     end
-    -- },
-}
+triggers = {}
 
 for file in lfs.dir("commands") do
     local command = file:match("^(.+).lua")
@@ -71,7 +34,8 @@ soul.tick = function()
     if io.open("/home/share/.emergency", "r") then
         os.execute("rm /home/share/.emergency")
         for k, v in pairs(group_list) do
-            local ret = bot.sendMessage{
+            local ret =
+                bot.sendMessage {
                 chat_id = v,
                 text = "有人向 @SJoshua 发起了紧急联络请求。如果您能够（在线下）联系到 Master 的话，麻烦使用 /emergency_informed 来删除广播信息，非常感谢。"
             }
@@ -108,9 +72,25 @@ soul.onMessageReceive = function(msg)
     -- special event
     if msg.text:gsub("%s*@%w+%s*", ""):find("[%a%p ]") then
         if msg.chat.id == -1001497094866 and os.date("%Y-%m-%d", os.time() + 8 * 3600) == "2021-10-08" then
-            return bot.sendMessage{
+            return bot.sendMessage {
                 chat_id = msg.chat.id,
                 text = "检测到您的发言中含有非中文字段。",
+                reply_to_message_id = msg.message_id
+            }
+        end
+    end
+
+    if msg.chat.id == -1001497094866 and os.date("%Y-%m-%d", os.time() + 8 * 3600) == "2021-10-13" then
+        local f = io.open("text_tmp", "w")
+        f:write(msg.text)
+        f:close()
+        local f = io.popen("python3 test.py", "r")
+        res = f:read()
+        f:close()
+        if res:find("True") then
+            return bot.sendMessage {
+                chat_id = msg.chat.id,
+                text = "Detected chinese text in your message.",
                 reply_to_message_id = msg.message_id
             }
         end
@@ -120,18 +100,22 @@ soul.onMessageReceive = function(msg)
         if msg.text:find("^%s*/" .. k) and not msg.text:find("^%s*/" .. k .. "%S") then
             if v.limit then
                 if v.limit.disable then
-                    return bot.sendMessage{
+                    return bot.sendMessage {
                         chat_id = msg.chat.id,
                         text = "Sorry, the command is disabled.",
                         reply_to_message_id = msg.message_id
                     }
                 elseif v.limit.master and msg.from.username ~= config.master then
-                    return bot.sendMessage{
+                    return bot.sendMessage {
                         chat_id = msg.chat.id,
                         text = "Sorry, permission denied.",
                         reply_to_message_id = msg.message_id
                     }
-                elseif (v.limit.match or v.limit.reply) and not ((v.limit.match and msg.text:find(v.limit.match)) or (v.limit.reply and msg.reply_to_message)) then
+                elseif
+                    (v.limit.match or v.limit.reply) and
+                        not ((v.limit.match and msg.text:find(v.limit.match)) or
+                            (v.limit.reply and msg.reply_to_message))
+                 then
                     return commands.help.func(msg, k)
                 end
             end
@@ -178,7 +162,7 @@ soul.onMessageReceive = function(msg)
             elseif ans:find("^document#%S-$") then
                 return bot.sendDocument(msg.chat.id, ans:match("^document#(%S-)$"), nil, nil, rep)
             else
-                return bot.sendMessage{
+                return bot.sendMessage {
                     chat_id = msg.chat.id,
                     text = ans,
                     parse_mode = rep_type,
@@ -189,7 +173,8 @@ soul.onMessageReceive = function(msg)
     end
 end
 
-soul.ignore = function(msg) end
+soul.ignore = function(msg)
+end
 
 soul.onEditedMessageReceive = soul.ignore
 soul.onLeftChatMembersReceive = soul.ignore
@@ -210,11 +195,16 @@ soul.onPinnedMessageReceive = soul.ignore
 soul.onVoiceChatStartedReceive = soul.ignore
 soul.onVoiceChatEndedReceive = soul.ignore
 
-setmetatable(soul, {
-    __index = function(t, key)
-        logger:warn("called undefined processer " .. key)
-        return (function() return false end)
-    end
-})
+setmetatable(
+    soul,
+    {
+        __index = function(t, key)
+            logger:warn("called undefined processer " .. key)
+            return (function()
+                return false
+            end)
+        end
+    }
+)
 
 return soul
