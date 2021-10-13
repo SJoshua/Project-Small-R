@@ -69,33 +69,33 @@ soul.onMessageReceive = function(msg)
         return true
     end
 
-    -- special event
-    if msg.text:gsub("%s*@%w+%s*", ""):find("[%a%p ]") then
-        if msg.chat.id == -1001497094866 and os.date("%Y-%m-%d", os.time() + 8 * 3600) == "2021-10-08" then
-            return bot.sendMessage {
-                chat_id = msg.chat.id,
-                text = "检测到您的发言中含有非中文字段。",
-                reply_to_message_id = msg.message_id
-            }
-        end
-    end
-
-    if
-        (msg.chat.id == -1001497094866 or msg.chat.id == -1001103633366) and
-            os.date("%Y-%m-%d", os.time() + 8 * 3600) == "2021-10-13"
-     then
-        local f = io.open("text_tmp", "w")
-        f:write(msg.text)
-        f:close()
-        local f = io.popen("python3 test.py", "r")
-        res = f:read()
-        f:close()
-        if res:find("True") then
-            return bot.sendMessage {
-                chat_id = msg.chat.id,
-                text = "Detected chinese text in your message.",
-                reply_to_message_id = msg.message_id
-            }
+    -- special event: enabled in 7ua / bot area.
+    if (msg.chat.id == -1001497094866 or msg.chat.id == -1001103633366) then
+        local date_weekday = os.date("%Y-%m-%a", os.time() + 8 * 3600)
+        if date_weekday == "2021-10-Wed" then
+            -- no-chinese day
+            local f = io.open("text_tmp", "w")
+            f:write(msg.text)
+            f:close()
+            f = io.popen("python3 test.py", "r")
+            res = f:read()
+            f:close()
+            if res:find("True") then
+                return bot.sendMessage {
+                    chat_id = msg.chat.id,
+                    text = "Detected Chinese text in your message.",
+                    reply_to_message_id = msg.message_id
+                }
+            end
+        elseif date_weekday == "2021-10-Fri" then
+            -- chinese-only day
+            if msg.text:gsub("%s*@%w+%s*", ""):find("[%a%p ]") then
+                return bot.sendMessage {
+                    chat_id = msg.chat.id,
+                    text = "检测到您的发言中含有非中文字段。",
+                    reply_to_message_id = msg.message_id
+                }
+            end
         end
     end
 
