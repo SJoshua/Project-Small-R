@@ -72,15 +72,20 @@ soul.onMessageReceive = function(msg)
     -- special event: enabled in 7ua / bot area.
     if (msg.chat.id == -1001497094866 or msg.chat.id == -1001103633366) then
         local date_weekday = os.date("%Y-%m-%a", os.time() + 8 * 3600)
-        if date_weekday == "2021-10-Wed" then
-            -- no-chinese day
+        local filtered_text = msg.text:gsub("%s*@%w+%s*", "")
+        local detect_language = function()
             local f = io.open("text_tmp", "w")
-            f:write(msg.text)
+            f:write(filtered_text)
             f:close()
             f = io.popen("python3 test.py", "r")
             res = f:read()
             f:close()
-            if res:find("True") then
+            return res
+        end
+
+        if date_weekday == "2021-10-Wed" then
+            -- no-chinese day
+            if detect_language():find("CN") then
                 return bot.sendMessage {
                     chat_id = msg.chat.id,
                     text = "Detected Chinese text in your message.",
@@ -89,7 +94,7 @@ soul.onMessageReceive = function(msg)
             end
         elseif date_weekday == "2021-10-Fri" then
             -- chinese-only day
-            if msg.text:gsub("%s*@%w+%s*", ""):find("[%a%p ]") then
+            if detect_language():find("JP") or filtered_text:find("[%a%p ]") then
                 return bot.sendMessage {
                     chat_id = msg.chat.id,
                     text = "检测到您的发言中含有非中文字段。",

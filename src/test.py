@@ -24,20 +24,34 @@ def check_character(char):
     except UnicodeEncodeError:
         is_traditional_chinese = False
 
-    # if not is_japanese:
-    #     print(f"{char}: JP[{is_japanese}] SC[{is_simplified_chinese}] TC[{is_traditional_chinese}]")
+    if char in (
+        "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんぁぃぅぇぉゃゅょがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ"
+        "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンァィゥェォャュョガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポ"
+    ):
+        is_simplified_chinese = False
+        is_traditional_chinese = False
 
-    return (is_simplified_chinese or is_traditional_chinese) and not is_japanese
+    # if not is_japanese:
+    # print(f"{char}: JP[{is_japanese}] SC[{is_simplified_chinese}] TC[{is_traditional_chinese}]")
+
+    return (is_simplified_chinese or is_traditional_chinese) << 1 | is_japanese
 
 
 def check_language(s: str):
+    contains_cn = False
+    contains_jp = False
     for char in s:
         if len(char.encode("UTF-8")) >= 2:
-            if check_character(char):
-                return True
-    return False
+            if check_character(char) == 0b10:
+                contains_cn = True
+            elif check_character(char) == 0b01:
+                contains_jp = True
+
+    if contains_cn:
+        print("CN")
+    if contains_jp:
+        print("JP")
 
 
-# res = "".join(sys.argv)
-
-print(check_language(open("text_tmp", "r").read()))
+check_language("".join(sys.argv))
+# check_language(open("text_tmp", "r").read())
