@@ -53,5 +53,5 @@ def check_language(s: str):
         print("JP")
 
 
-check_language("".join(sys.argv))
-# check_language(open("text_tmp", "r").read())
+# check_language("".join(sys.argv))
+check_language(open("text_tmp", "r").read())
