@@ -78,7 +78,7 @@ soul.onMessageReceive = function(msg)
             f:write(filtered_text)
             f:close()
             f = io.popen("python3 test.py", "r")
-            res = f:read()
+            res = f:read() or ""
             f:close()
             return res
         end
