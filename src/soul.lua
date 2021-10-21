@@ -70,7 +70,8 @@ soul.onMessageReceive = function(msg)
     end
 
     -- special event: enabled in 7ua / bot area.
-    if (msg.chat.id == -1001497094866 or msg.chat.id == -1001103633366) then
+    if (msg.chat.id == -1001497094866 or msg.chat.id == -1001103633366) and
+        not (msg.forward_from and msg.forward_from.id and msg.forward_from.id == msg.from.id) then
         local date_weekday = os.date("%Y-%m-%a", os.time() + 8 * 3600)
         local filtered_text = msg.text:gsub("%s*@%w+%s*", "")
         local detect_language = function()
