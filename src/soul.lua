@@ -102,6 +102,20 @@ soul.onMessageReceive = function(msg)
                     reply_to_message_id = msg.message_id
                 }
             end
+        elseif date_weekday == "2021-11-Fri" or _debug_flag then
+            -- paraquat day
+            local grass_list = {
+                "kusa", "grass", "[wc]", "v+", "草", "曹", "操", "槽", "艹", "糙", "超", "艸", "🌿", "🍀", "🌱"
+            }
+            for _, key in pairs(grass_list) do
+                if filtered_text:lower():find(key) then
+                    return bot.sendMessage {
+                        chat_id = msg.chat.id,
+                        text = "草",
+                        reply_to_message_id = msg.message_id
+                    }
+                end
+            end
         end
     end
 
@@ -195,7 +209,31 @@ soul.onVideoReceive = soul.ignore
 soul.onPollReceive = soul.ignore
 soul.onDocumentReceive = soul.ignore
 soul.onGameReceive = soul.ignore
-soul.onStickerReceive = soul.ignore
+
+soul.onStickerReceive = function(msg)
+    -- special event: enabled in 7ua / bot area.
+    if (msg.chat.id == -1001497094866 or msg.chat.id == -1001103633366) and
+        not (msg.forward_from and msg.forward_from.id and msg.forward_from.id ~= msg.from.id) then
+        local date_weekday = os.date("%Y-%m-%a", os.time() + 8 * 3600)
+        
+        if date_weekday == "2021-11-Fri" or _debug_flag then
+            -- paraquat day
+            local grass_list = {
+                "🌿", "🌱"
+            }
+            for _, key in pairs(grass_list) do
+                if msg.sticker.emoji == key then
+                    return bot.sendMessage {
+                        chat_id = msg.chat.id,
+                        text = "草",
+                        reply_to_message_id = msg.message_id
+                    }
+                end
+            end
+        end
+    end
+end
+
 soul.onDiceReceive = soul.ignore
 soul.onVideoNoteReceive = soul.ignore
 soul.onContactReceive = soul.ignore
