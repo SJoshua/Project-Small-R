@@ -6,7 +6,9 @@ local lfs = require("lfs")
 
 commands = {}
 broadcasts = {}
-triggers = {}
+records = {
+    recording = false
+}
 
 for file in lfs.dir("commands") do
     local command = file:match("^(.+).lua")
@@ -42,12 +44,65 @@ soul.tick = function()
             table.insert(broadcasts, {chat_id = v, message_id = ret.result.message_id})
         end
     end
+end
 
-    for k, v in pairs(triggers) do
-        if os.time() + 8 * 60 * 60 > v.timestamp then
-            v.timestamp = v.timestamp + 24 * 60 * 60
-            v.func()
+soul.globalMessageHandler = function(msg)
+    local date_weekday = os.date("%Y-%m-%a", os.time() + 8 * 3600)
+    if
+        ((msg.chat.id == -1001497094866 and date_weekday == "2021-11-Wed") or
+            (msg.chat.id == -1001103633366) and date_weekday == "2021-11-Tue")
+     then
+        if not records[msg.chat.id] then
+            records[msg.chat.id] = {
+                text = {},
+                file = {},
+                nick = {}
+            }
         end
+        if not records[msg.chat.id].nick[msg.from.id] then
+            records[msg.chat.id].nick[msg.from.id] =
+                msg.username and ("@" .. msg.from.username) or (msg.from.first_name or msg.from.id)
+        end
+        local text = msg.text or msg.caption
+        local file_id = nil
+        for k, v in pairs(msg) do
+            if type(v) == "table" and v.file_id then
+                file_id = v.file_id
+                break
+            end
+        end
+        local function check(field, index)
+            if index then
+                local current_record = records[msg.chat.id][field][index]
+                if current_record then
+                    bot.forwardMessage {
+                        chat_id = -1001202409693,
+                        from_chat_id = msg.chat.id,
+                        message_id = msg.message_id
+                    }
+                    bot.sendMessage {
+                        chat_id = -1001202409693,
+                        text = string.format(
+                            "[Hit @ %s]\n%s (%s) -> %s (%s)",
+                            msg.chat.title,
+                            records[msg.chat.id].nick[msg.from.id],
+                            os.date("%x %X", msg.date + 8 * 3600),
+                            records[msg.chat.id].nick[current_record.from],
+                            os.date("%x %X", current_record.date + 8 * 3600)
+                        )
+                    }
+                else
+                    records[msg.chat.id][field][index] = {
+                        message_id = msg.message_id,
+                        date = msg.date,
+                        from = msg.from.id
+                    }
+                end
+            end
+        end
+
+        check("text", text)
+        check("file", file_id)
     end
 end
 
@@ -70,50 +125,76 @@ soul.onMessageReceive = function(msg)
     end
 
     -- special event: enabled in 7ua / bot area.
-    if (msg.chat.id == -1001497094866 or msg.chat.id == -1001103633366) and
-        not (msg.forward_from and msg.forward_from.id and msg.forward_from.id ~= msg.from.id) then
-        local date_weekday = os.date("%Y-%m-%a", os.time() + 8 * 3600)
-        local filtered_text = msg.text:gsub("%s*@%w+%s*", "")
-        local detect_language = function()
-            local f = io.open("text_tmp", "w")
-            f:write(filtered_text)
-            f:close()
-            f = io.popen("python3 test.py", "r")
-            res = f:read() or ""
-            f:close()
-            return res
-        end
+    local date_weekday = os.date("%Y-%m-%a", os.time() + 8 * 3600)
 
-        if date_weekday == "2021-10-Wed" then
-            -- no-chinese day
-            if detect_language():find("CN") then
-                return bot.sendMessage {
-                    chat_id = msg.chat.id,
-                    text = "Detected Chinese text in your message.",
-                    reply_to_message_id = msg.message_id
-                }
+    soul.globalMessageHandler(msg)
+
+    if (msg.chat.id == -1001497094866 or msg.chat.id == -1001103633366) then
+        if not (msg.forward_from and msg.forward_from.id and msg.forward_from.id ~= msg.from.id) then
+            local filtered_text = msg.text:gsub("%s*@%w+%s*", "")
+            local detect_language = function()
+                local f = io.open("text_tmp", "w")
+                f:write(filtered_text)
+                f:close()
+                f = io.popen("python3 test.py", "r")
+                res = f:read() or ""
+                f:close()
+                return res
             end
-        elseif date_weekday == "2021-10-Fri" then
-            -- chinese-only day
-            if detect_language():find("JP") or filtered_text:find("[%a%p ]") then
-                return bot.sendMessage {
-                    chat_id = msg.chat.id,
-                    text = "检测到您的发言中含有非中文字段。",
-                    reply_to_message_id = msg.message_id
-                }
-            end
-        elseif date_weekday == "2021-11-Fri" then
-            -- paraquat day
-            local grass_list = {
-                "kusa", "grass", "^w+$", "^c+$", "ｗ", "くさ", "ｃ", "ｖｖ", "ＶＶ", "クサ", "ｇｒａｓｓ", "ｋｕｓａ", "草", "曹", "操", "槽", "艹", "糙", "超", "艸", "🌿", "🍀", "🌱"
-            }
-            for _, key in pairs(grass_list) do
-                if filtered_text:lower():find(key) then
+
+            if date_weekday == "2021-10-Wed" then
+                -- no-chinese day
+                if detect_language():find("CN") then
                     return bot.sendMessage {
                         chat_id = msg.chat.id,
-                        text = "草",
+                        text = "Detected Chinese text in your message.",
                         reply_to_message_id = msg.message_id
                     }
+                end
+            elseif date_weekday == "2021-10-Fri" then
+                -- chinese-only day
+                if detect_language():find("JP") or filtered_text:find("[%a%p ]") then
+                    return bot.sendMessage {
+                        chat_id = msg.chat.id,
+                        text = "检测到您的发言中含有非中文字段。",
+                        reply_to_message_id = msg.message_id
+                    }
+                end
+            elseif date_weekday == "2021-11-Fri" then
+                -- paraquat day
+                local grass_list = {
+                    "kusa",
+                    "grass",
+                    "^w+$",
+                    "^c+$",
+                    "ｗ",
+                    "くさ",
+                    "ｃ",
+                    "ｖｖ",
+                    "ＶＶ",
+                    "クサ",
+                    "ｇｒａｓｓ",
+                    "ｋｕｓａ",
+                    "草",
+                    "曹",
+                    "操",
+                    "槽",
+                    "艹",
+                    "糙",
+                    "超",
+                    "艸",
+                    "🌿",
+                    "🍀",
+                    "🌱"
+                }
+                for _, key in pairs(grass_list) do
+                    if filtered_text:lower():find(key) then
+                        return bot.sendMessage {
+                            chat_id = msg.chat.id,
+                            text = "草",
+                            reply_to_message_id = msg.message_id
+                        }
+                    end
                 end
             end
         end
@@ -197,6 +278,7 @@ soul.onMessageReceive = function(msg)
 end
 
 soul.ignore = function(msg)
+    soul.globalMessageHandler(msg)
 end
 
 soul.onEditedMessageReceive = soul.ignore
@@ -209,17 +291,23 @@ soul.onVideoReceive = soul.ignore
 soul.onPollReceive = soul.ignore
 soul.onDocumentReceive = soul.ignore
 soul.onGameReceive = soul.ignore
+soul.onChannelPostReceive = soul.ignore
+soul.onEditedChannelPostReceive = soul.ignore
 
 soul.onStickerReceive = function(msg)
+    soul.globalMessageHandler(msg)
     -- special event: enabled in 7ua / bot area.
-    if (msg.chat.id == -1001497094866 or msg.chat.id == -1001103633366) and
-        not (msg.forward_from and msg.forward_from.id and msg.forward_from.id ~= msg.from.id) then
+    if
+        (msg.chat.id == -1001497094866 or msg.chat.id == -1001103633366) and
+            not (msg.forward_from and msg.forward_from.id and msg.forward_from.id ~= msg.from.id)
+     then
         local date_weekday = os.date("%Y-%m-%a", os.time() + 8 * 3600)
-        
+
         if date_weekday == "2021-11-Fri" then
             -- paraquat day
             local grass_list = {
-                "🌿", "🌱"
+                "🌿",
+                "🌱"
             }
             for _, key in pairs(grass_list) do
                 if msg.sticker.emoji == key then
@@ -241,6 +329,10 @@ soul.onLocationReceive = soul.ignore
 soul.onPinnedMessageReceive = soul.ignore
 soul.onVoiceChatStartedReceive = soul.ignore
 soul.onVoiceChatEndedReceive = soul.ignore
+
+soul.onUnknownReceive = function(msg)
+    logger:warn("Received message with unknown type: " .. utils.encode(msg))
+end
 
 setmetatable(
     soul,
