@@ -67,9 +67,16 @@ soul.globalMessageHandler = function(msg)
         local text = msg.text or msg.caption
         local file_id = nil
         for k, v in pairs(msg) do
-            if type(v) == "table" and v.file_id then
-                file_id = v.file_id
-                break
+            if type(v) == "table" then
+                if v.file_unique_id then
+                    file_id = v.file_unique_id
+                    break
+                elseif type(v[1]) == "table" then
+                    if v[1].file_unique_id then
+                        file_id = v[1].file_unique_id
+                        break
+                    end
+                end
             end
         end
         if file_id then
