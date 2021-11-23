@@ -47,6 +47,7 @@ soul.tick = function()
 end
 
 soul.globalMessageHandler = function(msg)
+    -- No Replica Day
     local date_weekday = os.date("%Y-%m-%a", os.time() + 8 * 3600)
     if
         ((msg.chat.id == -1001497094866 and date_weekday == "2021-11-Wed") or
@@ -61,7 +62,7 @@ soul.globalMessageHandler = function(msg)
         end
         if not records[msg.chat.id].nick[msg.from.id] then
             records[msg.chat.id].nick[msg.from.id] =
-                msg.username and ("@" .. msg.from.username) or (msg.from.first_name or msg.from.id)
+                msg.from.username and ("@" .. msg.from.username) or (msg.from.first_name or msg.from.id)
         end
         local text = msg.text or msg.caption
         local file_id = nil
@@ -70,6 +71,9 @@ soul.globalMessageHandler = function(msg)
                 file_id = v.file_id
                 break
             end
+        end
+        if file_id then
+            logger:info("received message with file_id: " .. file_id)
         end
         local function check(field, index)
             if index then
@@ -92,6 +96,7 @@ soul.globalMessageHandler = function(msg)
                         )
                     }
                 else
+                    logger:info("new record: " .. field .. " - " .. index)
                     records[msg.chat.id][field][index] = {
                         message_id = msg.message_id,
                         date = msg.date,
