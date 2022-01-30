@@ -163,14 +163,19 @@ soul.onMessageReceive = function(msg)
                         reply_to_message_id = msg.message_id
                     }
                 end
-            elseif date_weekday == "2021-10-Fri" then
+            elseif date_weekday == "2021-01-Mon" then
                 -- chinese-only day
                 if detect_language():find("JP") or filtered_text:find("[%a%p ]") then
-                    return bot.sendMessage {
-                        chat_id = msg.chat.id,
-                        text = "检测到您的发言中含有非中文字段。",
-                        reply_to_message_id = msg.message_id
-                    }
+--                     return bot.sendMessage {
+--                         chat_id = msg.chat.id,
+--                         text = "检测到您的发言中含有非中文字段。",
+--                         reply_to_message_id = msg.message_id
+--                     }
+                        bot.forwardMessage {
+                            chat_id = -1001202409693,
+                            from_chat_id = msg.chat.id,
+                            message_id = msg.message_id
+                        }
                 end
             elseif date_weekday == "2021-11-Fri" then
                 -- paraquat day
