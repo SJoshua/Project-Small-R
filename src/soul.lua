@@ -163,7 +163,7 @@ soul.onMessageReceive = function(msg)
                         reply_to_message_id = msg.message_id
                     }
                 end
-            elseif date_weekday == "2021-01-Mon" then
+            elseif date_weekday == "2022-01-Mon" then
                 -- chinese-only day
                 if detect_language():find("JP") or filtered_text:find("[%a%p ]") then
 --                     return bot.sendMessage {
