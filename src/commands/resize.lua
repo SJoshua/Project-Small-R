@@ -9,13 +9,14 @@ local resize = {
         elseif msg.reply_to_message.photo then
             bot.downloadFile(msg.reply_to_message.photo[#msg.reply_to_message.photo].file_id, "sticker")
             os.execute("convert -resize 512x512 sticker sticker.png")
-        elseif msg.reply_to_message.document then
-            if msg.reply_to_message.document.file_size > 10485760 then
+        elseif msg.reply_to_message.document or msg.reply_to_message.video then
+            ref = msg.reply_to_message.document or msg.reply_to_message.video
+            if ref.file_size > 10485760 then
                 bot.sendMessage(msg.chat.id, "No more than 10M.", nil, nil, nil, msg.message_id)
                 return false
             end
-            bot.downloadFile(msg.reply_to_message.document.file_id, "sticker")
-            if msg.reply_to_message.document.mime_type:find("video") then
+            bot.downloadFile(ref.file_id, "sticker")
+            if ref.mime_type:find("video") then
                 output_fn = "sticker.webm"
                 os.remove(output_fn)
                 os.execute([[ffmpeg -i test.mp4 -t 3 -c:v libvpx-vp9 -fs 256K -vf 'scale=if(gte(iw\,ih)\,min(512\,iw)\,-2):if(lt(iw\,ih)\,min(512\,ih)\,-2),fps=30' -an sticker.webm]])
