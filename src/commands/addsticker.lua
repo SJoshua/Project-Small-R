@@ -2,9 +2,9 @@ local utils = require("utils")
 
 local addsticker = {
     func = function(msg)
-        local origin_title = msg.text:match("/addsticker%s*(%S.-)%s*$") 
+        local origin_title = msg.text:match("/addsticker%s*(%S.-)%s*$")
         local default_title = ("Sticker Pack By " .. msg.from.first_name .. (msg.from.last_name and (" " .. msg.from.last_name) or ""))
-        
+
         local title = origin_title or default_title
 
         local info = bot.sendMessage{
@@ -13,35 +13,43 @@ local addsticker = {
             reply_to_message_id = msg.message_id
         }
 
-        if not commands.resize.func(msg, true) then
+        output_fn = commands.resize.func(msg, true)
+        if not output_fn then -- already replied
             return
         end
 
-        local ret = bot.uploadStickerFile(msg.from.id, utils.readFile("sticker.png"))
-        if not ret.ok then
-            return bot.editMessageText{
-                chat_id = msg.chat.id,
-                message_id = info.result.message_id,
-                text = "Sorry, something was wrong. Please try again."
-            }
-        end
-        local fid = ret.result.file_id
-        os.remove("sticker.png")
-        
+        -- local ret = bot.uploadStickerFile(msg.from.id, )
+        -- if not ret.ok then
+        --     return bot.editMessageText{
+        --         chat_id = msg.chat.id,
+        --         message_id = info.result.message_id,
+        --         text = "Sorry, something was wrong. Please try again."
+        --     }
+        -- end
+        -- local fid = ret.result.file_id
+        -- os.remove("sticker.png")
+
         local c = 1
         local url = "u" .. msg.from.id .. "_by_" .. bot.info.username
-        local ret 
+        local ret
 
         local try
-        
+
         try = function()
-            ret = bot.createNewStickerSet{
-                user_id = msg.from.id, 
-                name = url, 
-                title = title, 
+            utils.readFile(output_fn)
+            local args = {
+                user_id = msg.from.id,
+                name = url,
+                title = title,
                 png_sticker = fid,
                 emojis = "🍀"
             }
+            if output_fn == "sticker.png" then
+                args.png_sticker = utils.readFile(output_fn)
+            elseif output_fn == "sticker.webm" then
+                args.webm_sticker = utils.readFile(output_fn)
+            end
+            ret = bot.createNewStickerSet(args)
 
             if ret.description == "Bad Request: PEER_ID_INVALID" then
                 return bot.editMessageText{
@@ -68,12 +76,17 @@ local addsticker = {
                 }
             end
 
-            ret = bot.addStickerToSet{
-                user_id = msg.from.id, 
-                name = url, 
-                png_sticker = fid, 
+            local args = {
+                user_id = msg.from.id,
+                name = url,
                 emojis = "🍀"
             }
+            if output_fn == "sticker.png" then
+                args.png_sticker = utils.readFile(output_fn)
+            elseif output_fn == "sticker.webm" then
+                args.webm_sticker = utils.readFile(output_fn)
+            end
+            ret = bot.addStickerToSet(args)
 
             if ret.ok then
                 return bot.editMessageText{
@@ -98,7 +111,7 @@ local addsticker = {
                 }
             end
         end
-        
+
         local status, err = pcall(try)
         if not status then
             return bot.editMessageText{
