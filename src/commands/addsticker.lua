@@ -61,7 +61,7 @@ local addsticker = {
                     emojis = "🍀"
                 }
                 args[field] = sticker_content
-                ret = bot.createNewStickerSet(args)
+                ret = bot.addStickerToSet(args)
             else
                 continue = true
             end
