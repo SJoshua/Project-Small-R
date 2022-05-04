@@ -17,6 +17,7 @@ local addsticker = {
         if not output_fn then -- already replied
             return
         end
+        local sticker_content = utils.readFile(output_fn)
 
         -- local ret = bot.uploadStickerFile(msg.from.id, )
         -- if not ret.ok then
@@ -36,18 +37,16 @@ local addsticker = {
         local try
 
         try = function()
-            utils.readFile(output_fn)
             local args = {
                 user_id = msg.from.id,
                 name = url,
                 title = title,
-                png_sticker = fid,
                 emojis = "🍀"
             }
             if output_fn == "sticker.png" then
-                args.png_sticker = utils.readFile(output_fn)
+                args.png_sticker = sticker_content
             elseif output_fn == "sticker.webm" then
-                args.webm_sticker = utils.readFile(output_fn)
+                args.webm_sticker = sticker_content
             end
             ret = bot.createNewStickerSet(args)
 
@@ -82,9 +81,9 @@ local addsticker = {
                 emojis = "🍀"
             }
             if output_fn == "sticker.png" then
-                args.png_sticker = utils.readFile(output_fn)
+                args.png_sticker = sticker_content
             elseif output_fn == "sticker.webm" then
-                args.webm_sticker = utils.readFile(output_fn)
+                args.webm_sticker = sticker_content
             end
             ret = bot.addStickerToSet(args)
 
