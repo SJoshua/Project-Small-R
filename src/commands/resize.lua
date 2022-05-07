@@ -19,7 +19,7 @@ local resize = {
             if ref.mime_type:find("video") then
                 output_fn = "sticker.webm"
                 os.remove(output_fn)
-                os.execute([[ffmpeg -i sticker -t 3 -c:v libvpx-vp9 -fs 256K -vf 'scale=if(gte(iw\,ih)\,min(512\,iw)\,-2):if(lt(iw\,ih)\,min(512\,ih)\,-2),fps=30' -an sticker.webm]])
+                os.execute([[ffmpeg -i sticker -t 3 -c:v libvpx-vp9 -fs 256K -vf 'scale=if(gte(iw\,ih)\,512\,-1):if(lt(iw\,ih)\,512\,-1),fps=30' -an sticker.webm]])
             else
                 os.execute("convert -resize 512x512 sticker sticker.png")
             end
