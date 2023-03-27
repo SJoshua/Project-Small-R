@@ -143,15 +143,15 @@ function bot.run()
             for key, upd in pairs(updates.result) do
                 threads[upd.update_id] = coroutine.create(function()
                     soul[("on%sReceive"):format(bot.analyzeMessageType(upd))](
-                        upd.message or upd.edited_message or upd.channel_post or upd.edited_channel_post 
-                        or upd.inline_query or upd.chosen_inline_result or upd.callback_query 
+                        upd.message or upd.edited_message or upd.channel_post or upd.edited_channel_post
+                        or upd.inline_query or upd.chosen_inline_result or upd.callback_query
                         or upd.shipping_query or upd.pre_checkout_query
                     )
                 end)
                 offset = upd.update_id + 1
             end
         end
-        
+
         for uid, thread in pairs(threads) do
             local status, res = coroutine.resume(thread)
             if not status then
