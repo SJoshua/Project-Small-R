@@ -4,7 +4,7 @@ local bmi = {
         tall = tonumber(tall)
         weight = tonumber(weight)
         if not tall or not weight or tall <= 0 or weight <= 0 then
-            return bot.sendMessage(msg.chat.id, "Wrong data.")
+            return bot.sendMessage(msg.chat.id, nil, "Wrong data.")
         else
             local bmi = weight / (tall ^ 2)
             local rank = "Underweight"
@@ -17,7 +17,7 @@ local bmi = {
             elseif bmi >= 18.5 then
                 rank = "Normal"
             end
-            return bot.sendMessage(msg.chat.id, string.format("*[BMI]*\n`tall  `: `%.2f m`\n`weight`: `%.2f kg`\n`BMI   `: `%.2f`\n`Rank  `: *%s*", tall, weight, bmi, rank), "Markdown")
+            return bot.sendMessage(msg.chat.id, nil, string.format("*[BMI]*\n`tall  `: `%.2f m`\n`weight`: `%.2f kg`\n`BMI   `: `%.2f`\n`Rank  `: *%s*", tall, weight, bmi, rank), "Markdown")
         end
     end,
     desc = "Calculate your BMI.",

@@ -7,7 +7,7 @@ local rand = {
         for opt in s:gmatch("(%S+)") do
             table.insert(t, opt)
         end
-        bot.sendMessage(msg.chat.id, string.format("*[rand]*\n```%s```", utils.rand(table.unpack(t))), "Markdown")
+        bot.sendMessage(msg.chat.id, nil, string.format("*[rand]*\n```%s```", utils.rand(table.unpack(t))), "Markdown")
     end,
     form = "/rand option1 option2 ...",
     limit = {

@@ -30,7 +30,7 @@ local roman_command = {
             end
             extra = extra .. '`'
         end
-        bot.sendMessage(msg.chat.id, "*[Result]*\n`" .. table.concat(t, " ") .. "`" .. extra, "Markdown", nil, nil, msg.message_id)
+        bot.sendMessage(msg.chat.id, nil, "*[Result]*\n`" .. table.concat(t, " ") .. "`" .. extra, "Markdown", nil, nil, msg.message_id)
     end,
     desc = "translate roman numerals to dec numbers.",
     limit = {

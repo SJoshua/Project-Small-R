@@ -6,15 +6,15 @@ local flight = {
         local page = utils.wget("http://m.baidu.com/s?word=" .. fnum)
 
         if not page then
-            return bot.sendMessage(msg.chat.id, "Sorry, network error.")
+            return bot.sendMessage(msg.chat.id, nil, "Sorry, network error.")
         end
 
         local html = page:match(("<em>.-%s</em>.-航班动态(.-flight.-)飞常准"):format(fnum))
-        
+
         if not html then
-            return bot.sendMessage(msg.chat.id, "Sorry, not found.")
+            return bot.sendMessage(msg.chat.id, nil, "Sorry, not found.")
         end
-        
+
         local t = {}
 
         for k in html:gmatch(">([^<>]+)<") do
@@ -57,7 +57,7 @@ local flight = {
         ]]
 
         if not t[22] then
-            return bot.sendMessage(msg.chat.id, "Sorry, not found.")
+            return bot.sendMessage(msg.chat.id, nil, "Sorry, not found.")
         end
 
         local resp = {
@@ -77,7 +77,7 @@ local flight = {
             "\\[\\*] " .. t[22],
         }
 
-        bot.sendMessage(msg.chat.id, table.concat(resp, "\n"), "Markdown")
+        bot.sendMessage(msg.chat.id, nil, table.concat(resp, "\n"), "Markdown")
     end,
     desc = "Query flight information.",
     form = "/flight <flight_number>",

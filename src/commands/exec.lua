@@ -8,10 +8,10 @@ local exec = {
             for i = 2, #t do
                 ts = ts .. string.format("[return %d] %s\n", i-1, tostring(t[i]))
             end
-            bot.sendMessage(msg.chat.id, ts .. "[END]")
+            bot.sendMessage(msg.chat.id, nil, ts .. "[END]")
         elseif config.dolua then
             if msg.text:find("for") or msg.text:find("while") or msg.text:find("until") or msg.text:find("goto") or msg.text:find("function") then
-                bot.sendMessage(msg.chat.id, "Sorry, but no looping.")
+                bot.sendMessage(msg.chat.id, nil, "Sorry, but no looping.")
             else
                 local t = {pcall(load("local utils = require('utils'); _ENV = utils.sandbox{'math', 'string', 'pairs', 'cjson', 'table', 'message', 'base64', 'md5'}; string.dump = nil; " .. string.match(msg.text, "/exec(.*)")))}
 
@@ -22,7 +22,7 @@ local exec = {
                 if #ts > 4096 then
                     ts = "[status] false\n"
                 end
-                bot.sendMessage(msg.chat.id, ts .. "[END]")
+                bot.sendMessage(msg.chat.id, nil, ts .. "[END]")
             end
         end
     end,

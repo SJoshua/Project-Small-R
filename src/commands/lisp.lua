@@ -9,7 +9,7 @@ local lisp = {
         local res = f:read("*a")
         f:close()
         if not res:find("Exception") or not slient then
-            bot.sendMessage(msg.chat.id, "*[Result]*```\n" .. res .. "```", "Markdown", nil, nil, msg.message_id)
+            bot.sendMessage(msg.chat.id, nil, "*[Result]*```\n" .. res .. "```", "Markdown", nil, nil, msg.message_id)
         end
     end,
     desc = "Execute code in scheme.",

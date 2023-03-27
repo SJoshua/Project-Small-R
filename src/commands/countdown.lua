@@ -31,13 +31,13 @@ local countdown = {
                 break
             end
         end
-        
+
         if countdown_rec[msg.chat.id] then
             bot.deleteMessage(msg.chat.id, countdown_rec[msg.chat.id].query_id)
             bot.deleteMessage(msg.chat.id, countdown_rec[msg.chat.id].response_id)
         end
-        
-        local res = bot.sendMessage(msg.chat.id, text, "Markdown")
+
+        local res = bot.sendMessage(msg.chat.id, nil, text, "Markdown")
 
         countdown_rec[msg.chat.id] = {
             query_id = msg.message_id,

@@ -279,9 +279,9 @@ soul.onMessageReceive = function(msg)
             end
 
             if ans:find("^sticker#%S-$") then
-                return bot.sendSticker(msg.chat.id, ans:match("^sticker#(%S-)$"), nil, rep)
+                return bot.sendSticker(msg.chat.id, nil, ans:match("^sticker#(%S-)$"), nil, rep)
             elseif ans:find("^document#%S-$") then
-                return bot.sendDocument(msg.chat.id, ans:match("^document#(%S-)$"), nil, nil, rep)
+                return bot.sendDocument(msg.chat.id, nil, ans:match("^document#(%S-)$"), nil, nil, rep)
             else
                 return bot.sendMessage {
                     chat_id = msg.chat.id,

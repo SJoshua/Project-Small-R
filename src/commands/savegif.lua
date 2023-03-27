@@ -22,10 +22,10 @@ local savegif = {
                     parse_mode = "Markdown"
                 }
             else
-                bot.sendMessage(msg.chat.id, "Sorry, size limit is 20M.")
+                bot.sendMessage(msg.chat.id, nil, "Sorry, size limit is 20M.")
             end
         else
-            bot.sendMessage(msg.chat.id, "Sorry, gif not found.")
+            bot.sendMessage(msg.chat.id, nil, "Sorry, gif not found.")
         end
     end,
     form = "/savegif [speed=1]",

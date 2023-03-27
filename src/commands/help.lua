@@ -16,12 +16,12 @@ local help = {
     func = function(msg, cmd)
         local cmd = cmd or tostring(msg.text:match("/help%s*(%S+)%s*"))
         if commands[cmd] then
-            bot.sendMessage(msg.chat.id,
+            bot.sendMessage(msg.chat.id, nil,
                 (commands[cmd].limit and commands[cmd].limit.master and "*[master command]*\n" or "") ..
                 string.format("`%s`\n%s", commands[cmd].form or ("/" .. cmd), commands[cmd].help or commands[cmd].desc),
                 "Markdown", nil, nil, msg.message_id)
         else
-            bot.sendMessage(msg.chat.id, commands.help.generate(msg.text:find("_all")), "Markdown")
+            bot.sendMessage(msg.chat.id, nil, commands.help.generate(msg.text:find("_all")), "Markdown")
         end
     end,
     form = "/help <command>",

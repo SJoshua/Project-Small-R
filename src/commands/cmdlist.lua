@@ -11,7 +11,7 @@ local cmdlist = {
         for i = 1, #t do
             text = text .. string.format("`%s` - %s\n", t[i] or ("/" .. t[i]), commands[t[i]].desc)
         end
-        bot.sendMessage(msg.chat.id, text, "Markdown")
+        bot.sendMessage(msg.chat.id, nil, text, "Markdown")
     end,
     desc = "Generate command list.",
     limit = {

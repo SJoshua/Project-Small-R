@@ -5,11 +5,11 @@ local schedule = {
         local tid = msg.text:match("/schedule%s*([ZTKDGCSYztkdgcsy]?%d+)")
         local page = utils.curl("http://search.huochepiao.net/checi/" .. tid)
         if not page then
-            return bot.sendMessage(msg.chat.id, "Sorry, network error.")
+            return bot.sendMessage(msg.chat.id, nil, "Sorry, network error.")
         end
 
         if page:find("不存在") then
-            return bot.sendMessage(msg.chat.id, "Sorry, not found.")
+            return bot.sendMessage(msg.chat.id, nil, "Sorry, not found.")
         end
 
         local trainNo = page:match("<td.->Train No.</td>.-<td.->(.-)</td>") or tid
@@ -24,7 +24,7 @@ local schedule = {
         local field = page:match('<table border="0" bgcolor="#0033cc".->.-</tr>(.-)</table>')
 
         if not field then
-            return bot.sendMessage(msg.chat.id, "Sorry, not found.")
+            return bot.sendMessage(msg.chat.id, nil, "Sorry, not found.")
         end
 
         -- stupid monkeys
@@ -68,7 +68,7 @@ local schedule = {
             resp[mark + 6] = resp[mark + 6]:gsub("\\%[`(#%d+)`%](.-)\\%[", "*[%1]%2*\\[")
         end
 
-        bot.sendMessage(msg.chat.id, table.concat(resp, "\n"), "Markdown")
+        bot.sendMessage(msg.chat.id, nil, table.concat(resp, "\n"), "Markdown")
     end,
     desc = "Query schedule of subway in China.",
     form = "/schedule <number>",

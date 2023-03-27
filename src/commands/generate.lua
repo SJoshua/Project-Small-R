@@ -4,7 +4,7 @@ local generate = {
     func = function(msg)
         local bangumi, mark, number = msg.text:match("/generate%s*(%S.-)([@#])([%d%.]+)")
         local notice = "searching..."
-        local ret = bot.sendMessage(msg.chat.id, notice, nil, nil, nil, msg.message_id)
+        local ret = bot.sendMessage(msg.chat.id, nil, notice, nil, nil, nil, msg.message_id)
         local query = utils.wget("http://anicobin.ldblog.jp/search?q=" .. utils.url_encode(bangumi))
         local reg = '<h2 class="top%-article%-title entry%-title"><a href="([^\n]-)"[^\n]-rel="bookmark">([^\n]-BGM_NUM)[^\n]-</a></h2>'
         if not query then
@@ -20,7 +20,7 @@ local generate = {
         if not page then
             return bot.editMessageText(msg.chat.id, ret.result.message_id, nil, notice .. "\nnetwork error.", "HTML")
         end
-        
+
         notice = notice .. "\nmatching..."
         bot.editMessageText(msg.chat.id, ret.result.message_id, nil, notice, "HTML")
         local mat = '<span%s*style="[^"]-">[^<>]-<b>([^<>]-)</b>[^<>]-</span>'
@@ -32,9 +32,9 @@ local generate = {
         --page = page:gsub("<a%s*rel=\"nofollow.-</a>", "\n"):gsub("<div%s*[^<>]-%s*class=\"tw.-</div>", "\n")
         page = page:gsub("<b><span[^<>]-><b>[^<>]-</b></span>([^<>]-)</b>", "<b>%1</b>")
         page = page:gsub("。", "\n"):gsub("！", "\n"):gsub("？", "\n"):gsub("\r\n", "\n"):gsub("\n+", "\n")
-        
+
         local f=io.open("tes", "w") f:write(page) f:close()
-        
+
         for current in page:gmatch(mat) do
             for sentence in current:gmatch("([^\n]+)") do
                 local tmp = sentence:gsub("^.-「", ""):gsub("^.-『", ""):gsub("^.-《", ""):gsub("^.-（", ""):gsub("」", ""):gsub("》", ""):gsub("』", ""):gsub("）", "")
@@ -49,16 +49,16 @@ local generate = {
                 if #(current .. origin[k]) < 4096 then
                     current = current .. origin[k] .. "\n"
                 else
-                    bot.sendMessage(msg.chat.id, current)
+                    bot.sendMessage(msg.chat.id, nil, current)
                     current = "\t" .. origin[k] .. "\n"
                 end
             end
-            bot.sendMessage(msg.chat.id, current)
+            bot.sendMessage(msg.chat.id, nil, current)
         else
             local f = io.open("script.txt", "w")
             f:write(table.concat(origin, "\n"))
             f:close()
-            bot.sendDocument(msg.chat.id, utils.readFile("script.txt"))
+            bot.sendDocument(msg.chat.id, nil, utils.readFile("script.txt"))
         end
         bot.editMessageText(msg.chat.id, ret.result.message_id, nil, notice .. "\ndone.", "HTML")
     end,

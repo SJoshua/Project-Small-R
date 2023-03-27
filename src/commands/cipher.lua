@@ -28,7 +28,7 @@ local cipher = {
             end
             extra = extra .. '`'
         end
-        bot.sendMessage(msg.chat.id, "*[Result]*" .. extra, "Markdown", nil, nil, msg.message_id)
+        bot.sendMessage(msg.chat.id, nil, "*[Result]*" .. extra, "Markdown", nil, nil, msg.message_id)
     end,
     desc = "decode cipher.",
     limit = {

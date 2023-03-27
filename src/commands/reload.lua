@@ -1,7 +1,7 @@
 local reload = {
     func = function(msg)
-        local ret = bot.sendMessage(msg.chat.id, "reloading...", nil, nil, nil, msg.message_id)
-        
+        local ret = bot.sendMessage(msg.chat.id, nil, "reloading...", nil, nil, nil, msg.message_id)
+
         local status, err = pcall(bot.reload)
 
         bot.editMessageText(msg.chat.id, ret.result.message_id, nil, "reloading...\n" .. (status and "done." or err), "Markdown")

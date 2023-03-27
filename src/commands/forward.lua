@@ -4,7 +4,7 @@ local forward = {
         local chat_id = tonumber(msg.text:match("@(%-?%d+)")) or msg.chat.id
         local res = bot.forwardMessage(msg.chat.id, chat_id, false, mid)
         if not res.ok then
-            bot.sendMessage(msg.chat.id, "Sorry, not found.")
+            bot.sendMessage(msg.chat.id, nil, "Sorry, not found.")
         end
     end,
     form = "/forward <msgID> [@chatID]",

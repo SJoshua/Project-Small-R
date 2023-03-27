@@ -1,9 +1,9 @@
 local locate = {
     func = function(msg)
         local mid = tonumber(msg.text:match("/locate%s*(%d+)%s*"))
-        local res = bot.sendMessage(msg.chat.id, "Located.", nil, nil, nil, mid)
+        local res = bot.sendMessage(msg.chat.id, nil, "Located.", nil, nil, nil, mid)
         if not res.ok then
-            bot.sendMessage(msg.chat.id, "Sorry, not found.")
+            bot.sendMessage(msg.chat.id, nil, "Sorry, not found.")
         end
     end,
     form = "/locate <msgID>",
