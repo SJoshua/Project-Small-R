@@ -27,4 +27,4 @@ I am using luaver as Lua Version Manager. This is an example with debian/ubuntu.
 7. Install dependency of luasec. `sudo apt install libssl-dev`
 8. Install dependencies of this project. `cat requirements.txt | xargs -L 1 luarocks install --local`
 9. Edit `src/config.lua` (copy from `src/config-example.lua`).
-10. Start bot. `cd src && lua bot.lua`
+10. Start bot. `cd src && lua main.lua`
