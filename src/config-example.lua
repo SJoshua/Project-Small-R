@@ -11,14 +11,14 @@ local config = {
     -- Timeout for getUpdates method
     timeout = 0,
 
-    -- Limit for getUpdates metho- - d
-    limit = 100, 
+    -- Limit for getUpdates method
+    limit = 100,
 
     -- Max delay
     ignore = 10,
-    
+
     -- Enable dolua for guest
     dolua = true,
 }
- 
+
 return config
